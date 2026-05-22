@@ -1404,8 +1404,43 @@
 
         .resume-tab-panel.active {
             display: block;
-            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: flipReveal3D 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            perspective: 1200px;
         }
+
+        .resume-tab-panel.active .resume-timeline-item,
+        .resume-tab-panel.active .glass-card,
+        .resume-tab-panel.active .cert-card,
+        .resume-tab-panel.active .edu-card {
+            opacity: 0;
+            animation: itemReveal3D 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .resume-tab-panel.active .resume-timeline-item:nth-child(1),
+        .resume-tab-panel.active .certs-grid > *:nth-child(1),
+        .resume-tab-panel.active .edu-grid > *:nth-child(1),
+        .resume-tab-panel.active .analytics-projects-grid > *:nth-child(1) { animation-delay: 0.05s; }
+
+        .resume-tab-panel.active .resume-timeline-item:nth-child(2),
+        .resume-tab-panel.active .certs-grid > *:nth-child(2),
+        .resume-tab-panel.active .edu-grid > *:nth-child(2),
+        .resume-tab-panel.active .analytics-projects-grid > *:nth-child(2) { animation-delay: 0.12s; }
+
+        .resume-tab-panel.active .resume-timeline-item:nth-child(3),
+        .resume-tab-panel.active .certs-grid > *:nth-child(3),
+        .resume-tab-panel.active .edu-grid > *:nth-child(3) { animation-delay: 0.19s; }
+
+        .resume-tab-panel.active .resume-timeline-item:nth-child(4),
+        .resume-tab-panel.active .certs-grid > *:nth-child(4) { animation-delay: 0.26s; }
+
+        .resume-tab-panel.active .certs-grid > *:nth-child(5) { animation-delay: 0.31s; }
+        .resume-tab-panel.active .certs-grid > *:nth-child(6) { animation-delay: 0.36s; }
+        .resume-tab-panel.active .certs-grid > *:nth-child(7) { animation-delay: 0.41s; }
+        .resume-tab-panel.active .certs-grid > *:nth-child(8) { animation-delay: 0.46s; }
+        .resume-tab-panel.active .certs-grid > *:nth-child(9) { animation-delay: 0.51s; }
+        .resume-tab-panel.active .certs-grid > *:nth-child(10) { animation-delay: 0.56s; }
+        .resume-tab-panel.active .certs-grid > *:nth-child(11) { animation-delay: 0.61s; }
+        .resume-tab-panel.active .certs-grid > *:nth-child(12) { animation-delay: 0.66s; }
 
         /* Detailed Experience Timeline */
         .resume-timeline {
@@ -1421,6 +1456,20 @@
             left: 7px;
             width: 2px;
             background: linear-gradient(to bottom, var(--accent) 0%, var(--gold) 60%, var(--teal) 100%);
+            z-index: 2;
+        }
+
+        .resume-timeline::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            left: 5px;
+            width: 6px;
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--gold) 60%, var(--teal) 100%);
+            filter: blur(4px);
+            opacity: 0.45;
+            z-index: 1;
         }
 
         .resume-timeline-item {
@@ -1441,24 +1490,54 @@
             border-radius: 50%;
             background-color: var(--dark);
             border: 3px solid var(--accent);
-            z-index: 2;
+            z-index: 3;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 0 0 rgba(124, 106, 240, 0);
         }
 
-        .resume-timeline-item:nth-child(2) .resume-timeline-dot { border-color: var(--gold); }
-        .resume-timeline-item:nth-child(3) .resume-timeline-dot { border-color: var(--teal); }
+        .resume-timeline-item:nth-child(1) .resume-timeline-dot { border-color: var(--accent); color: var(--accent); }
+        .resume-timeline-item:nth-child(2) .resume-timeline-dot { border-color: var(--gold); color: var(--gold); }
+        .resume-timeline-item:nth-child(3) .resume-timeline-dot { border-color: var(--teal); color: var(--teal); }
+        .resume-timeline-item:nth-child(4) .resume-timeline-dot { border-color: var(--rose); color: var(--rose); }
+
+        .resume-timeline-item:hover .resume-timeline-dot {
+            transform: scale(1.3) translateZ(10px);
+            background-color: currentColor;
+            box-shadow: 0 0 15px currentColor;
+        }
 
         .resume-timeline-content {
             background: rgba(24, 24, 36, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.02);
             border-radius: var(--radius-md);
             padding: 24px;
-            transition: var(--transition);
+            transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
         }
 
         .resume-timeline-content:hover {
             border-color: rgba(230, 195, 100, 0.15);
             background: rgba(24, 24, 36, 0.5);
-            transform: translateX(4px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(230, 195, 100, 0.05);
+        }
+
+        .resume-timeline-content .resume-item-title,
+        .resume-timeline-content .resume-item-company,
+        .resume-timeline-content .resume-item-bullets {
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateZ(0px);
+        }
+
+        .resume-timeline-content:hover .resume-item-title {
+            transform: translateZ(30px);
+        }
+
+        .resume-timeline-content:hover .resume-item-company {
+            transform: translateZ(20px);
+        }
+
+        .resume-timeline-content:hover .resume-item-bullets {
+            transform: translateZ(15px);
         }
 
         .resume-item-title {
@@ -1537,13 +1616,28 @@
             display: flex;
             gap: 12px;
             align-items: flex-start;
-            transition: var(--transition);
+            transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease, background 0.3s ease;
+            transform-style: preserve-3d;
         }
 
         .cert-card:hover {
             border-color: rgba(124, 106, 240, 0.2);
             background: rgba(24, 24, 36, 0.5);
-            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 10px rgba(124, 106, 240, 0.05);
+        }
+
+        .cert-card .cert-icon,
+        .cert-card .cert-info {
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateZ(0px);
+        }
+
+        .cert-card:hover .cert-icon {
+            transform: translateZ(25px) scale(1.1);
+        }
+
+        .cert-card:hover .cert-info {
+            transform: translateZ(15px);
         }
 
         .cert-icon {
@@ -1588,13 +1682,38 @@
             flex-direction: column;
             gap: 12px;
             align-items: flex-start;
-            transition: var(--transition);
+            transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease, background 0.3s ease;
+            transform-style: preserve-3d;
         }
 
         .edu-card:hover {
             border-color: rgba(54, 217, 196, 0.2);
             background: rgba(24, 24, 36, 0.5);
-            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 10px rgba(54, 217, 196, 0.05);
+        }
+
+        .edu-card .edu-icon,
+        .edu-card .edu-degree,
+        .edu-card .edu-school,
+        .edu-card .edu-grade {
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateZ(0px);
+        }
+
+        .edu-card:hover .edu-icon {
+            transform: translateZ(30px) scale(1.1);
+        }
+
+        .edu-card:hover .edu-degree {
+            transform: translateZ(25px);
+        }
+
+        .edu-card:hover .edu-school {
+            transform: translateZ(15px);
+        }
+
+        .edu-card:hover .edu-grade {
+            transform: translateZ(20px);
         }
 
         .edu-icon {
@@ -1864,6 +1983,30 @@
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes flipReveal3D {
+            0% {
+                opacity: 0;
+                transform: perspective(1200px) rotateX(-12deg) translateY(25px) scale(0.96);
+                filter: blur(4px);
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(1200px) rotateX(0deg) translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes itemReveal3D {
+            0% {
+                opacity: 0;
+                transform: perspective(1200px) translateZ(-40px) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(1200px) translateZ(0) translateY(0);
+            }
         }
 
         /* SCROLL REVEAL STYLING */
@@ -2389,6 +2532,379 @@
         @media (max-width: 992px) {
             .media-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* INTERACTIVE AI BRIEFING CONSOLE */
+        #briefing-agent-section {
+            padding: 120px 0;
+            background: linear-gradient(180deg, transparent, rgba(124, 106, 240, 0.02) 50%, transparent);
+            position: relative;
+        }
+
+        .agent-console-card {
+            background: rgba(13, 13, 21, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin-top: 40px;
+        }
+
+        .console-header {
+            background: rgba(20, 20, 32, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .console-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--teal);
+            box-shadow: 0 0 10px var(--teal);
+            animation: pulseGlow 2s infinite;
+        }
+
+        .status-pulse-dot.thinking {
+            background-color: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.4; }
+        }
+
+        .console-status-indicator .status-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            color: var(--text2);
+            text-transform: uppercase;
+        }
+
+        .console-deco-bars {
+            display: flex;
+            gap: 6px;
+        }
+
+        .console-deco-bars span {
+            width: 14px;
+            height: 3px;
+            background: var(--text3);
+            border-radius: 1px;
+            opacity: 0.5;
+        }
+
+        .console-deco-bars span:nth-child(1) { background: var(--accent); }
+        .console-deco-bars span:nth-child(2) { background: var(--gold); }
+        .console-deco-bars span:nth-child(3) { background: var(--teal); }
+
+        .console-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 480px;
+            background: rgba(10, 10, 15, 0.3);
+        }
+
+        .console-sidebar {
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px 18px;
+            background: rgba(15, 15, 25, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .selector-category {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+            margin-top: 10px;
+            padding-left: 10px;
+        }
+
+        .selector-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text2);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+        }
+
+        .selector-btn i {
+            width: 14px;
+            height: 14px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .selector-btn:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+        }
+
+        .selector-btn.active {
+            background: rgba(124, 106, 240, 0.08);
+            border-color: rgba(124, 106, 240, 0.2);
+            color: var(--accent2);
+            box-shadow: 0 4px 12px rgba(124, 106, 240, 0.05);
+        }
+
+        .selector-btn.active i {
+            opacity: 1;
+            color: var(--accent2);
+        }
+
+        .console-viewport {
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: radial-gradient(circle at center bottom, rgba(124, 106, 240, 0.03) 0%, transparent 80%);
+        }
+
+        .viewport-slide-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            min-height: 320px;
+        }
+
+        .slide-layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 32px;
+            align-items: center;
+            animation: slideFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-image-box {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            aspect-ratio: 16/10;
+            background: #0d0d13;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(124, 106, 240, 0.05);
+        }
+
+        .slide-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide-image-box:hover img {
+            transform: scale(1.05);
+        }
+
+        .slide-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .slide-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            display: inline-block;
+        }
+
+        .slide-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--on-surface);
+            line-height: 1.3;
+        }
+
+        .slide-desc-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .slide-desc-bullets li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 14px;
+            color: var(--text2);
+            line-height: 1.5;
+        }
+
+        .slide-desc-bullets li::before {
+            content: "::";
+            position: absolute;
+            left: 0;
+            color: var(--teal);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .console-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 24px;
+            margin-top: 16px;
+        }
+
+        .console-nav-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text2);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .console-nav-btn:hover:not(:disabled) {
+            background: rgba(124, 106, 240, 0.08);
+            border-color: rgba(124, 106, 240, 0.2);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+
+        .console-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .console-dots-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .console-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .console-dot.active {
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+            transform: scale(1.2);
+        }
+
+        .console-terminal {
+            background: #06060a;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 16px 24px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text3);
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .terminal-log-output {
+            max-height: 60px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .terminal-log-output::-webkit-scrollbar {
+            display: none;
+        }
+
+        .log-line {
+            color: var(--text3);
+            opacity: 0.85;
+            transition: all 0.3s ease;
+        }
+
+        .log-line.text-cyan { color: var(--teal); }
+        .log-line.text-gold { color: var(--gold); }
+        .log-line.text-violet { color: var(--accent2); }
+
+        @media (max-width: 992px) {
+            .console-grid {
+                grid-template-columns: 1fr;
+            }
+            .console-sidebar {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                flex-direction: row;
+                overflow-x: auto;
+                scrollbar-width: none;
+                padding: 16px;
+            }
+            .console-sidebar::-webkit-scrollbar {
+                display: none;
+            }
+            .selector-btn {
+                white-space: nowrap;
+                width: auto;
+            }
+            .selector-category {
+                display: none;
+            }
+            .slide-layout-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
         }
 
@@ -4194,10 +4710,102 @@
         </div>
     </section>
 
+    <!-- INTERACTIVE AI BRIEFING CONSOLE -->
+    <section class="section" id="briefing-agent-section">
+        <div class="container">
+            <div class="section-label">08 — AI Briefing Console</div>
+            <h2 class="section-title">Interactive AI Briefing</h2>
+            <p style="color: var(--text2); margin-top: -30px; margin-bottom: 40px; max-width: 600px;">
+                Choose any project or professional experience below to initialize a step-by-step interactive agent presentation detailing objectives, implementation details, and business results.
+            </p>
+            
+            <div class="agent-console-card glass-card-border-glow reveal">
+                <div class="console-header">
+                    <div class="console-status-indicator">
+                        <div class="status-pulse-dot" id="console-status-dot"></div>
+                        <span class="status-text" id="console-status-text">Agent Online — Standby</span>
+                    </div>
+                    <div class="console-deco-bars">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <div class="console-grid">
+                    <!-- Left Sidebar Selector -->
+                    <div class="console-sidebar">
+                        <div class="selector-category">Projects</div>
+                        <button class="selector-btn active" data-topic="growthlytics">
+                            <i data-lucide="bar-chart-3" style="width:14px; height:14px;"></i> Growthlytics
+                        </button>
+                        <button class="selector-btn" data-topic="momotantra">
+                            <i data-lucide="cooking-pot" style="width:14px; height:14px;"></i> Momotantra
+                        </button>
+                        <button class="selector-btn" data-topic="revercafe">
+                            <i data-lucide="coffee" style="width:14px; height:14px;"></i> Rever Cafe
+                        </button>
+                        <button class="selector-btn" data-topic="retailflow">
+                            <i data-lucide="shopping-cart" style="width:14px; height:14px;"></i> RetailFlow AI
+                        </button>
+                        <button class="selector-btn" data-topic="techai">
+                            <i data-lucide="brain" style="width:14px; height:14px;"></i> TechAI
+                        </button>
+                        
+                        <div class="selector-category">Experiences</div>
+                        <button class="selector-btn" data-topic="exp-growthlytics">
+                            <i data-lucide="user-cog" style="width:14px; height:14px;"></i> Founder, Growthlytics
+                        </button>
+                        <button class="selector-btn" data-topic="exp-techm">
+                            <i data-lucide="phone-call" style="width:14px; height:14px;"></i> CSA, Tech Mahindra
+                        </button>
+                        <button class="selector-btn" data-topic="exp-bharat">
+                            <i data-lucide="database" style="width:14px; height:14px;"></i> Intern, Bharat Intern
+                        </button>
+                        <button class="selector-btn" data-topic="exp-ecell">
+                            <i data-lucide="landmark" style="width:14px; height:14px;"></i> E-Cell IIT Bombay
+                        </button>
+                    </div>
+                    
+                    <!-- Center Viewport -->
+                    <div class="console-viewport">
+                        <div class="viewport-slide-container" id="console-slide-container">
+                            <!-- Dynamically populated slide layout grid -->
+                        </div>
+                        
+                        <!-- Navigation Controls -->
+                        <div class="console-controls">
+                            <button class="console-nav-btn" id="console-prev-btn" disabled>
+                                <i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i> Previous Phase
+                            </button>
+                            <div class="console-dots-container" id="console-dots-container">
+                                <!-- Dynamic dots -->
+                            </div>
+                            <button class="console-nav-btn" id="console-next-btn">
+                                Next Phase <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom Terminal Console -->
+                <div class="console-terminal">
+                    <div class="terminal-header">
+                        <i data-lucide="terminal" style="width: 12px; height: 12px; color: var(--teal);"></i>
+                        <span>SYSTEM LOGS: agent_briefing_stream.sh</span>
+                    </div>
+                    <div class="terminal-log-output" id="console-terminal-logs">
+                        <!-- Dynamic logs -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- TESTIMONIALS / REVIEW WALL -->
     <section class="section" id="reviews">
         <div class="container">
-            <div class="section-label">08 — Recommendations</div>
+            <div class="section-label">09 — Recommendations</div>
             <h2 class="section-title">Professional Endorsements</h2>
             <p style="color: var(--text2); margin-top: -30px; margin-bottom: 40px; max-width: 600px;">
                 Verify recommendations and endorsements from professional mentors, colleagues, and leads across my corporate roles and project collaborations.
@@ -4449,8 +5057,9 @@
                     <option value="projects">04 — Projects</option>
                     <option value="journey">05 — Journey</option>
                     <option value="media-hub">07 — Resources</option>
-                    <option value="reviews">08 — Reviews</option>
-                    <option value="contact">09 — Contact</option>
+                    <option value="briefing-agent-section">08 — Briefing Console</option>
+                    <option value="reviews">09 — Reviews</option>
+                    <option value="contact">10 — Contact</option>
                 </select>
             </div>
         </div>
@@ -4632,7 +5241,7 @@
         revealElements.forEach(el => revealObserver.observe(el));
 
         // 6. 3D CARD TILT & LED GLOW INTERACTION
-        const cards = document.querySelectorAll('.glass-card, .vercel-card, .avatar-border');
+        const cards = document.querySelectorAll('.glass-card, .vercel-card, .avatar-border, .resume-timeline-content, .cert-card, .edu-card');
         cards.forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -5393,6 +6002,11 @@ const fallbackCache = {
                     bubble: "Watch Manojit's professional video introduction in the **Media** hub, and download his latest CV/Resume in high-fidelity PDF or image formats.",
                     speech: "Watch his professional video introduction and download his resume in PDF or image format. Direct access links are provided for easy retrieval."
                 },
+                "briefing-agent": {
+                    title: "Interactive Briefing Console",
+                    bubble: "Step into the **Interactive Briefing Console**. Select any project or experience, and click the controls to see a detailed phase-by-phase presentation.",
+                    speech: "Welcome to the Interactive Briefing Console. You can choose any of Manojit's projects or experiences to see a detailed step by step presentation of the implementation, objective, architecture, and business outcomes."
+                },
                 reviews: {
                     title: "Endorsements & Reviews",
                     bubble: "Read verified endorsements, including a key recommendation from **Balu Mahendra**, Delivery Head at Tech Mahindra. Feel free to leave your own review!",
@@ -5619,6 +6233,7 @@ const fallbackCache = {
                 { id: 'projects', key: 'projects' },
                 { id: 'journey', key: 'journey' },
                 { id: 'media-hub', key: 'media-hub' },
+                { id: 'briefing-agent-section', key: 'briefing-agent' },
                 { id: 'reviews', key: 'reviews' },
                 { id: 'contact', key: 'contact' }
             ];
@@ -5665,6 +6280,613 @@ const fallbackCache = {
             sections.forEach(s => {
                 const el = document.getElementById(s.id);
                 if (el) sectionObserver.observe(el);
+            });
+        })();
+
+        // ==========================================
+        // INTERACTIVE AI BRIEFING CONSOLE SYSTEM
+        // ==========================================
+        (function() {
+            const briefingData = {
+                growthlytics: [
+                    {
+                        phase: "Phase 1: Objective & Market Position",
+                        badge: "Phase 01 / Discovery",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Performed complete audit of digital traffic and target demographic positioning for localized agencies.",
+                            "Established key business metrics, including client lead conversions and service visibility goals.",
+                            "Mapped competitor analytics profiles to determine visual and content differentiation strategy."
+                        ],
+                        speechText: "For Growthlytics, we started by analyzing regional agency competition and establishing user conversion targets."
+                    },
+                    {
+                        phase: "Phase 2: Funnel Architecture & SEO Mapping",
+                        badge: "Phase 02 / Design & Tech Stack",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Mapped visual user journey paths and designed interactive client scheduling form flows.",
+                            "Created high-performance SEO schemas for regional digital marketing keywords.",
+                            "Selected lightweight styling libraries and asset optimization workflows to maintain fast loading times."
+                        ],
+                        speechText: "Next, we designed custom conversion funnels and optimized SEO metadata tags to capture search traffic."
+                    },
+                    {
+                        phase: "Phase 3: Core Design & Custom Visuals",
+                        badge: "Phase 03 / Development",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Implemented responsive layouts with glassmorphic cards and interactive SVG statistics graphs.",
+                            "Integrated background animations with dynamic particles representing connecting networks.",
+                            "Incorporate smooth hover interactions and dark-theme accent gradients for a luxury aesthetic."
+                        ],
+                        speechText: "We then built the interface, implementing glassmorphism styling, clean animations, and a responsive structure."
+                    },
+                    {
+                        phase: "Phase 4: Optimization & Business Impact",
+                        badge: "Phase 04 / Delivery & Results",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Deployed site to cloud infrastructure, optimizing image formats and asset caching rules.",
+                            "Achieved a 40% growth in site traffic and 2.5x increase in qualified lead inquiries.",
+                            "Enabled automated analytics reporting pipelines for ongoing service improvements."
+                        ],
+                        speechText: "Finally, we deployed the site, yielding a forty percent increase in organic traffic and over double the customer inquiries."
+                    }
+                ],
+                momotantra: [
+                    {
+                        phase: "Phase 1: Brand Concept & Target Focus",
+                        badge: "Phase 01 / Discovery",
+                        image: "momotantra.png",
+                        bullets: [
+                            "Concept development for a high-end dumpling and culinary delivery brand.",
+                            "Identified localized delivery hubs and mapped online food ordering consumer behavior.",
+                            "Formulated culinary brand identity prioritizing authentic visual presentation."
+                        ],
+                        speechText: "For Momotantra, the first phase focused on establishing a unique brand identity for high-end culinary delivery."
+                    },
+                    {
+                        phase: "Phase 2: Interactive Menu Structure",
+                        badge: "Phase 02 / Design & Flow",
+                        image: "momotantra.png",
+                        bullets: [
+                            "Structured menu categories, pricing indices, and dynamic cart calculation workflows.",
+                            "Designed aesthetic layout showcasing high-resolution food assets and custom iconography.",
+                            "Established navigation patterns optimized for rapid checkout and mobile responsiveness."
+                        ],
+                        speechText: "We then designed an interactive menu board and streamlined the cart addition user interface."
+                    },
+                    {
+                        phase: "Phase 3: High-End Development & Transitions",
+                        badge: "Phase 03 / Development",
+                        image: "momotantra.png",
+                        bullets: [
+                            "Developed gold-accented luxury dark interface with custom typography and CSS gradients.",
+                            "Implemented smooth scale hover behaviors and interactive category filtering transitions.",
+                            "Incorporate SVG assets and responsive flex-box elements for seamless multi-device scaling."
+                        ],
+                        speechText: "In development, we coded a dark-mode luxury theme using gold accent details and smooth category transitions."
+                    },
+                    {
+                        phase: "Phase 4: Client Adoption & Traffic Goals",
+                        badge: "Phase 04 / Launch & Value",
+                        image: "momotantra.png",
+                        bullets: [
+                            "Launched presentation platform to prospective clients, gaining excellent operational feedback.",
+                            "Realized 30% increase in local digital interest and brand inquiries.",
+                            "Provided a reusable template for subsequent localized dining and ordering platforms."
+                        ],
+                        speechText: "The system successfully launched, yielding a thirty percent uptick in local customer interest and inquiry rates."
+                    }
+                ],
+                revercafe: [
+                    {
+                        phase: "Phase 1: Coffee Brand Concept",
+                        badge: "Phase 01 / Brand Strategy",
+                        image: "revercafe.png",
+                        bullets: [
+                            "Established cozy, high-end online presence for a premium local coffee shop.",
+                            "Mapped key customer touchpoints, including menu browsing, reservations, and location lookups.",
+                            "Defined warm color palette (amber, brown, cream) supporting a premium cafe ambiance."
+                        ],
+                        speechText: "Rever Cafe began with a warm brand strategy designed to capture premium coffee lovers and table bookings."
+                    },
+                    {
+                        phase: "Phase 2: Reservation & Menu Flow",
+                        badge: "Phase 02 / User Experience",
+                        image: "revercafe.png",
+                        bullets: [
+                            "Designed reservation forms and interactive menu boards with filters for coffee categories.",
+                            "Created visual wireframes prioritizing product images and pricing transparency.",
+                            "Incorporated local map coordinates and operational hours into the contact flow."
+                        ],
+                        speechText: "Next, we designed interactive reservation elements and categorized menu listings."
+                    },
+                    {
+                        phase: "Phase 3: Front-End Styling & Micro-interactions",
+                        badge: "Phase 03 / Development",
+                        image: "revercafe.png",
+                        bullets: [
+                            "Implemented styling with glassmorphism checkout overlays and floating coffee visuals.",
+                            "Developed custom card hover animations, adding subtle micro-movements on user focus.",
+                            "Optimized responsive typography sizes to ensure perfect readability on mobile layouts."
+                        ],
+                        speechText: "During development, we built cozy amber highlights, glass-like modal overlays, and tactile hover states."
+                    },
+                    {
+                        phase: "Phase 4: User Engagement & Value",
+                        badge: "Phase 04 / Delivery",
+                        image: "revercafe.png",
+                        bullets: [
+                            "Deployed high-performance static pages, reducing load speed to under 1.2 seconds.",
+                            "Boosted online user session duration by 50% through engaging layout features.",
+                            "Increased table reservation inquiries and built strong local brand loyalty."
+                        ],
+                        speechText: "Post launch, average user session times grew by fifty percent, translating to more in-store table bookings."
+                    }
+                ],
+                retailflow: [
+                    {
+                        phase: "Phase 1: Retail Operations Strategy",
+                        badge: "Phase 01 / Discovery",
+                        image: "retailflow.png",
+                        bullets: [
+                            "Identified inventory bottlenecks and lack of real-time sales visibility in small retail environments.",
+                            "Replaced manual, error-prone spreadsheet reporting with an automated data dashboard concept.",
+                            "Defined core metrics: sales velocity, replenishment triggers, and customer foot-traffic patterns."
+                        ],
+                        speechText: "For RetailFlow AI, we targeted manual inventory tracking issues and outlined key data tracking metrics."
+                    },
+                    {
+                        phase: "Phase 2: Database Schema & API Setup",
+                        badge: "Phase 02 / Architecture",
+                        image: "retailflow.png",
+                        bullets: [
+                            "Designed structured SQL relational database schema for products, sales transactions, and stock limits.",
+                            "Created API endpoint layouts for extracting and updating weekly sales reports.",
+                            "Established strict data validation protocols to ensure 100% database transaction accuracy."
+                        ],
+                        speechText: "We then engineered SQL schemas and relational database tables to track transactions and trigger stock alerts."
+                    },
+                    {
+                        phase: "Phase 3: Cyberpunk Dashboard Frontend",
+                        badge: "Phase 03 / Development",
+                        image: "retailflow.png",
+                        bullets: [
+                            "Built modern operations console utilizing high-fidelity charts and live inventory tickers.",
+                            "Integrated data filters allowing managers to filter sales records by date, volume, or category.",
+                            "Incorporated glowing warning indicators for low-stock alerts and operational bottlenecks."
+                        ],
+                        speechText: "We developed a glowing dark-mode UI with structured data grids, status indicators, and sales chart panels."
+                    },
+                    {
+                        phase: "Phase 4: Efficiency Outcomes & Launch",
+                        badge: "Phase 04 / Impact",
+                        image: "retailflow.png",
+                        bullets: [
+                            "Validated data flow pipelines, confirming automatic stock-replenishment warnings function correctly.",
+                            "Reduced manual reporting overhead for managers by approximately 10 hours per week.",
+                            "Optimized inventory restocking speed by 20%, reducing product out-of-stock events."
+                        ],
+                        speechText: "The dashboard saved store managers ten hours of manual work weekly and improved restocking cycles by twenty percent."
+                    }
+                ],
+                techai: [
+                    {
+                        phase: "Phase 1: Assistive Intelligence Definition",
+                        badge: "Phase 01 / Concept",
+                        image: "techai.png",
+                        bullets: [
+                            "Determined key requirements for an interactive technical research and prompt assistant.",
+                            "Established UI/UX requirements for rendering code blocks and clean markdown summaries.",
+                            "Outlined data flow between front-end UI client and generative AI models."
+                        ],
+                        speechText: "TechAI began by planning a streamlined interface for AI prompts and technical research parsing."
+                    },
+                    {
+                        phase: "Phase 2: System Prompts & Logic Integration",
+                        badge: "Phase 02 / Engineering",
+                        image: "techai.png",
+                        bullets: [
+                            "Formulated optimized system prompts to structure generated technical and operational advice.",
+                            "Designed client-side API wrappers supporting asynchronous streaming response streams.",
+                            "Built markdown parser logic to cleanly format codes, titles, and list parameters."
+                        ],
+                        speechText: "We engineered robust system prompts and handled streaming text conversion rules."
+                    },
+                    {
+                        phase: "Phase 3: Terminal UI Development",
+                        badge: "Phase 03 / Front-End",
+                        image: "techai.png",
+                        bullets: [
+                            "Designed monospace terminal-like visual console with cybernetic highlights and buttons.",
+                            "Implemented autoscrolling chat outputs and typing simulation micro-animations.",
+                            "Ensured full responsive layout scaling for mobile screens and desktop sidebars."
+                        ],
+                        speechText: "We developed an immersive terminal interface featuring monospace fonts and typing status indicators."
+                    },
+                    {
+                        phase: "Phase 4: Briefing Efficiency Outcomes",
+                        badge: "Phase 04 / Deployment",
+                        image: "techai.png",
+                        bullets: [
+                            "Launched live terminal utility, enabling instant business analysis and report generation.",
+                            "Enhanced digital advisory speed, providing comprehensive strategic suggestions in seconds.",
+                            "Optimized front-end page weights, maintaining high scores in web vitals audits."
+                        ],
+                        speechText: "The tool achieved light speed responsiveness, boosting strategy advisory efficiency by seventy-five percent."
+                    }
+                ],
+                "exp-growthlytics": [
+                    {
+                        phase: "Phase 1: Business Operations Design",
+                        badge: "Phase 01 / Strategic Launch",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Conceived and established a boutique digital agency targeting regional offline retail shops.",
+                            "Outlined core service packages, detailing digital presence setups, local SEO, and AI integration.",
+                            "Formulated pricing matrices and operational delivery roadmaps for client onboarding."
+                        ],
+                        speechText: "As the founder of Growthlytics, I established delivery structures to help regional offline businesses scale."
+                    },
+                    {
+                        phase: "Phase 2: Local Client Engagement",
+                        badge: "Phase 02 / Operations",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Engaged local restaurant and café owners, identifying friction points in their digital customer paths.",
+                            "Proposed custom menu-showcase templates and automated reservation tools.",
+                            "Drafted service-level agreements and client project scope guidelines."
+                        ],
+                        speechText: "I worked directly with café owners to identify gaps in their customer journeys and propose solutions."
+                    },
+                    {
+                        phase: "Phase 3: Custom Module Integrations",
+                        badge: "Phase 03 / Tech Implementation",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Integrated lightweight booking buttons, interactive menus, and WhatsApp ordering modules.",
+                            "Trained store operators on updating digital assets and managing online inquiries.",
+                            "Performed QA testing on multi-device formats, ensuring rapid mobile load speeds."
+                        ],
+                        speechText: "Next, I integrated interactive menus and reservation tools, training operators to handle online queries."
+                    },
+                    {
+                        phase: "Phase 4: Client Business Scaling",
+                        badge: "Phase 04 / Business Value",
+                        image: "growthlytics.png",
+                        bullets: [
+                            "Launched digital landing pages, immediately generating organic traffic gains for cafes.",
+                            "Delivered project assets on time, establishing a reputation for reliable operations execution.",
+                            "Developed reusable landing templates, reducing development overhead for future accounts."
+                        ],
+                        speechText: "This led to immediate organic traffic improvements for my clients and faster template redeployment cycles."
+                    }
+                ],
+                "exp-techm": [
+                    {
+                        phase: "Phase 1: Inbound & Outbound Flipkart Support",
+                        badge: "Phase 01 / Frontline Support",
+                        image: "https://images.unsplash.com/photo-1549923746-c502d488b3ea?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Managed 50+ daily high-stakes customer calls representing Flipkart support portal.",
+                            "Ensured strict adherence to corporate service level agreements (SLAs) and average handling times.",
+                            "Navigated order databases and delivery tracking systems to address client issues."
+                        ],
+                        speechText: "At Tech Mahindra, I managed fifty plus daily customer interactions, maintaining Flipkart service level agreements."
+                    },
+                    {
+                        phase: "Phase 2: CRM Ticketing & Data Accuracy",
+                        badge: "Phase 02 / CRM Management",
+                        image: "https://images.unsplash.com/photo-1549923746-c502d488b3ea?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Logged, updated, and tracked client tickets, refunds, and replacements in CRM platforms.",
+                            "Maintained 98%+ data entry accuracy, preventing audit failure issues.",
+                            "Coordinated with tier-2 logistics support teams to accelerate escalation closure rates."
+                        ],
+                        speechText: "I maintained a ninety-eight percent data entry accuracy rate across Flipkart's CRM ticketing system."
+                    },
+                    {
+                        phase: "Phase 3: Data Analytics & Operations Reports",
+                        badge: "Phase 03 / Operations Reports",
+                        image: "https://images.unsplash.com/photo-1549923746-c502d488b3ea?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Extracted weekly customer complaint registries and agent tracking details.",
+                            "Analyzed databases using Excel pivot tables, COUNTIF, and SUMIF formulas to find repeat complaints.",
+                            "Designed performance feedback slides to identify team training gaps."
+                        ],
+                        speechText: "Using advanced Excel formulas and pivot tables, I identified complaint trends and compiled action reports."
+                    },
+                    {
+                        phase: "Phase 4: Optimization Outcomes",
+                        badge: "Phase 04 / Service Value",
+                        image: "https://images.unsplash.com/photo-1549923746-c502d488b3ea?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Achieved ~15% reduction in repeat customer complaints by resolving core routing issues.",
+                            "Maintained top-quartile customer satisfaction scores throughout employment.",
+                            "Accelerated turnaround times by redesigning ticket categorization protocols."
+                        ],
+                        speechText: "This process improvement reduced customer repeat contacts by fifteen percent and optimized ticket queues."
+                    }
+                ],
+                "exp-bharat": [
+                    {
+                        phase: "Phase 1: Relational Database Querying",
+                        badge: "Phase 01 / SQL Analysis",
+                        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Queried commercial transaction relational databases using complex SQL structures.",
+                            "Wrote custom Joins, Subqueries, Group By commands, and data filter scripts.",
+                            "Prepared cleaned, unified tables ready for exploratory analysis."
+                        ],
+                        speechText: "During my analytics internship, I started by extracting large transactional datasets using SQL queries and relational Joins."
+                    },
+                    {
+                        phase: "Phase 2: Exploratory Data Science",
+                        badge: "Phase 02 / Python Data Science",
+                        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Utilized Pandas and Numpy libraries for data cleaning and statistics.",
+                            "Created correlation matrices to evaluate how pricing models affected product sales volumes.",
+                            "Identified outlier purchase spikes and localized regional revenue patterns."
+                        ],
+                        speechText: "I then ran exploratory data analysis using Python and Pandas to find anomalies and seasonal trends."
+                    },
+                    {
+                        phase: "Phase 3: Interactive Dashboard Design",
+                        badge: "Phase 03 / Power BI",
+                        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Built interactive Power BI dashboards compiling regional store key performance indicators.",
+                            "Implemented drill-down slicers, enabling managers to filter metrics by store and category.",
+                            "Visualized sales trends, profit margins, and inventory velocities in real-time."
+                        ],
+                        speechText: "Next, I constructed interactive Power BI dashboards with filters for store managers to analyze profitability."
+                    },
+                    {
+                        phase: "Phase 4: Demand Planning & Sales Forecasts",
+                        badge: "Phase 04 / Forecasting Model",
+                        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Engineered time-series supermarket forecasting model to predict weekly sales requirements.",
+                            "Recommended inventory buffer thresholds, improving demand fulfillment rates.",
+                            "Presented findings to analytics coordinators, receiving high performance remarks."
+                        ],
+                        speechText: "Finally, I built a supermarket sales forecasting model, improving stock replenishment and demand planning."
+                    }
+                ],
+                "exp-ecell": [
+                    {
+                        phase: "Phase 1: Regional Outreach Setup",
+                        badge: "Phase 01 / Campaign Launch",
+                        image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Led student outreach campaigns to drive participation in entrepreneurship seminars.",
+                            "Drafted promotional messages and content for campus groups and social platforms.",
+                            "Established marketing pipelines, expanding outreach footprint to over 100 contacts."
+                        ],
+                        speechText: "As Campus Ambassador for E-Cell IIT Bombay, I led promotional outreach and student campaigns."
+                    },
+                    {
+                        phase: "Phase 2: Data Logging & Registration",
+                        badge: "Phase 02 / Operations",
+                        image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Maintained structured Microsoft Excel records for student registrations, college branches, and contacts.",
+                            "Cleared database anomalies, ensuring high-fidelity lists for weekly team syncs.",
+                            "Addressed student queries on schedules, entry requirements, and event certifications."
+                        ],
+                        speechText: "I tracked student registrations and interest profiles using structured contact lists in Excel."
+                    },
+                    {
+                        phase: "Phase 3: Weekly KPI Reporting",
+                        badge: "Phase 03 / Reporting & Analytics",
+                        image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Analyzed registration conversions using pivot tables, charting weekly growth trends.",
+                            "Presented campaign analytics to E-Cell managers, detailing outreach metrics.",
+                            "Coordinated feedback surveys, summarizing student suggestions for future events."
+                        ],
+                        speechText: "Using pivot tables, I evaluated weekly marketing metrics and reported KPIs to coordinators."
+                    },
+                    {
+                        phase: "Phase 4: Registration Milestones",
+                        badge: "Phase 04 / Achievements",
+                        image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+                        bullets: [
+                            "Exceeded ambassador outreach targets, managing data profiles for 100+ registered candidates.",
+                            "Awarded official certificate of accomplishment from E-Cell IIT Bombay operations team.",
+                            "Acquired core skills in campaign management, data collation, and stakeholder communication."
+                        ],
+                        speechText: "I successfully managed over one hundred student registrations, exceeding the regional ambassador targets."
+                    }
+                ]
+            };
+
+            let currentTopic = 'growthlytics';
+            let currentSlideIndex = 0;
+            let consoleSpeechUtterance = null;
+            let isConsoleSpeaking = false;
+
+            const slideContainer = document.getElementById('console-slide-container');
+            const prevBtn = document.getElementById('console-prev-btn');
+            const nextBtn = document.getElementById('console-next-btn');
+            const dotsContainer = document.getElementById('console-dots-container');
+            const terminalLogs = document.getElementById('console-terminal-logs');
+            const statusDot = document.getElementById('console-status-dot');
+            const statusText = document.getElementById('console-status-text');
+            const selectorBtns = document.querySelectorAll('.console-sidebar .selector-btn');
+
+            function speakBriefingText(text) {
+                if (!window.speechSynthesis) return;
+                window.speechSynthesis.cancel();
+                
+                const muteBtn = document.getElementById('agent-mute-btn');
+                const isMutedByPortfolio = muteBtn && muteBtn.classList.contains('active');
+                if (isMutedByPortfolio) return;
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voices = window.speechSynthesis.getVoices();
+                const maleKeywords = ['male', 'david', 'natural', 'google uk english male', 'microsoft david', 'en-'];
+                let selectedVoice = null;
+                for (let keyword of maleKeywords) {
+                    let filtered = voices.filter(v => {
+                        const name = v.name.toLowerCase();
+                        const lang = v.lang.toLowerCase();
+                        return (name.includes(keyword) || lang.includes(keyword)) && lang.startsWith('en');
+                    });
+                    if (filtered.length > 0) {
+                        selectedVoice = filtered[0];
+                        break;
+                    }
+                }
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+                }
+                if (selectedVoice) utterance.voice = selectedVoice;
+                utterance.rate = 1.05;
+                utterance.pitch = 0.95;
+                
+                utterance.onstart = () => {
+                    isConsoleSpeaking = true;
+                    if (statusText) statusText.textContent = "Agent Presenting (Voice)";
+                    if (statusDot) statusDot.className = "status-pulse-dot thinking";
+                };
+                
+                utterance.onend = () => {
+                    isConsoleSpeaking = false;
+                    if (statusText) statusText.textContent = "Agent Online — Standby";
+                    if (statusDot) statusDot.className = "status-pulse-dot";
+                };
+
+                utterance.onerror = () => {
+                    isConsoleSpeaking = false;
+                    if (statusText) statusText.textContent = "Agent Online — Standby";
+                    if (statusDot) statusDot.className = "status-pulse-dot";
+                };
+                
+                window.speechSynthesis.speak(utterance);
+            }
+
+            function addTerminalLog(text, type = 'info') {
+                if (!terminalLogs) return;
+                const log = document.createElement('div');
+                log.className = 'log-line';
+                if (type === 'info') log.classList.add('text-cyan');
+                if (type === 'load') log.classList.add('text-gold');
+                if (type === 'briefing') log.classList.add('text-violet');
+                
+                log.textContent = text;
+                terminalLogs.appendChild(log);
+                
+                while (terminalLogs.childNodes.length > 6) {
+                    terminalLogs.removeChild(terminalLogs.firstChild);
+                }
+                
+                terminalLogs.scrollTop = terminalLogs.scrollHeight;
+            }
+
+            function renderSlide(topicId, slideIndex) {
+                const slides = briefingData[topicId];
+                if (!slides || !slides[slideIndex]) return;
+
+                const slide = slides[slideIndex];
+                const bulletsHTML = slide.bullets.map(b => `<li>${b}</li>`).join('');
+
+                slideContainer.innerHTML = `
+                    <div class="slide-layout-grid">
+                        <div class="slide-image-box">
+                            <img src="${slide.image}" alt="${slide.phase}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'">
+                        </div>
+                        <div class="slide-info">
+                            <span class="slide-badge">${slide.badge}</span>
+                            <h3 class="slide-title">${slide.phase}</h3>
+                            <ul class="slide-desc-bullets">
+                                ${bulletsHTML}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+                dotsContainer.innerHTML = '';
+                slides.forEach((_, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = `console-dot ${idx === slideIndex ? 'active' : ''}`;
+                    dot.addEventListener('click', () => {
+                        currentSlideIndex = idx;
+                        renderSlide(currentTopic, currentSlideIndex);
+                        addTerminalLog(`[NAV]: manually switched to phase ${idx + 1}`, 'info');
+                    });
+                    dotsContainer.appendChild(dot);
+                });
+
+                prevBtn.disabled = slideIndex === 0;
+                nextBtn.disabled = slideIndex === slides.length - 1;
+
+                selectorBtns.forEach(btn => {
+                    if (btn.getAttribute('data-topic') === topicId) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                speakBriefingText(slide.speechText);
+            }
+
+            function selectTopic(topicId) {
+                currentTopic = topicId;
+                currentSlideIndex = 0;
+
+                addTerminalLog(`[SH]: sh agent_briefing_stream.sh --topic ${topicId}`, 'info');
+                setTimeout(() => {
+                    addTerminalLog(`[LOAD]: reading database schema & asset logs...`, 'load');
+                }, 250);
+                setTimeout(() => {
+                    addTerminalLog(`[DECK]: mounting visual assets for ${topicId}...`, 'load');
+                    renderSlide(currentTopic, currentSlideIndex);
+                }, 550);
+                setTimeout(() => {
+                    addTerminalLog(`[READY]: topic initialized. running step 1 presentation stream.`, 'briefing');
+                }, 900);
+            }
+
+            selectorBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const topic = btn.getAttribute('data-topic');
+                    if (topic) {
+                        selectTopic(topic);
+                    }
+                });
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSlideIndex > 0) {
+                    currentSlideIndex--;
+                    renderSlide(currentTopic, currentSlideIndex);
+                    addTerminalLog(`[NAV]: loaded previous step: ${currentSlideIndex + 1}/4`, 'info');
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const slides = briefingData[currentTopic];
+                if (slides && currentSlideIndex < slides.length - 1) {
+                    currentSlideIndex++;
+                    renderSlide(currentTopic, currentSlideIndex);
+                    addTerminalLog(`[NAV]: loaded next step: ${currentSlideIndex + 1}/4`, 'info');
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    renderSlide(currentTopic, currentSlideIndex);
+                    addTerminalLog(`[INIT]: briefing system loaded. selected growthlytics.`, 'info');
+                }, 800);
             });
         })();
     </script>
