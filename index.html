@@ -6709,68 +6709,70 @@ const fallbackCache = {
             let consoleSpeechUtterance = null;
             let isConsoleSpeaking = false;
 
-            const slideContainer = document.getElementById('console-slide-container');
-            const prevBtn = document.getElementById('console-prev-btn');
-            const nextBtn = document.getElementById('console-next-btn');
-            const dotsContainer = document.getElementById('console-dots-container');
-            const terminalLogs = document.getElementById('console-terminal-logs');
-            const statusDot = document.getElementById('console-status-dot');
-            const statusText = document.getElementById('console-status-text');
-            const selectorBtns = document.querySelectorAll('.console-sidebar .selector-btn');
-
             function speakBriefingText(text) {
                 if (!window.speechSynthesis) return;
-                window.speechSynthesis.cancel();
-                
-                const muteBtn = document.getElementById('agent-mute-btn');
-                const isMutedByPortfolio = muteBtn && muteBtn.classList.contains('active');
-                if (isMutedByPortfolio) return;
+                try {
+                    window.speechSynthesis.cancel();
+                    
+                    const muteBtn = document.getElementById('agent-mute-btn');
+                    const isMutedByPortfolio = muteBtn && muteBtn.classList.contains('active');
+                    if (isMutedByPortfolio) return;
 
-                const utterance = new SpeechSynthesisUtterance(text);
-                const voices = window.speechSynthesis.getVoices();
-                const maleKeywords = ['male', 'david', 'natural', 'google uk english male', 'microsoft david', 'en-'];
-                let selectedVoice = null;
-                for (let keyword of maleKeywords) {
-                    let filtered = voices.filter(v => {
-                        const name = v.name.toLowerCase();
-                        const lang = v.lang.toLowerCase();
-                        return (name.includes(keyword) || lang.includes(keyword)) && lang.startsWith('en');
-                    });
-                    if (filtered.length > 0) {
-                        selectedVoice = filtered[0];
-                        break;
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    const voices = window.speechSynthesis.getVoices();
+                    const maleKeywords = ['male', 'david', 'natural', 'google uk english male', 'microsoft david', 'en-'];
+                    let selectedVoice = null;
+                    for (let keyword of maleKeywords) {
+                        let filtered = voices.filter(v => {
+                            const name = v.name.toLowerCase();
+                            const lang = v.lang.toLowerCase();
+                            return (name.includes(keyword) || lang.includes(keyword)) && lang.startsWith('en');
+                        });
+                        if (filtered.length > 0) {
+                            selectedVoice = filtered[0];
+                            break;
+                        }
                     }
-                }
-                if (!selectedVoice) {
-                    selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
-                }
-                if (selectedVoice) utterance.voice = selectedVoice;
-                utterance.rate = 1.05;
-                utterance.pitch = 0.95;
-                
-                utterance.onstart = () => {
-                    isConsoleSpeaking = true;
-                    if (statusText) statusText.textContent = "Agent Presenting (Voice)";
-                    if (statusDot) statusDot.className = "status-pulse-dot thinking";
-                };
-                
-                utterance.onend = () => {
-                    isConsoleSpeaking = false;
-                    if (statusText) statusText.textContent = "Agent Online — Standby";
-                    if (statusDot) statusDot.className = "status-pulse-dot";
-                };
+                    if (!selectedVoice) {
+                        selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+                    }
+                    if (selectedVoice) utterance.voice = selectedVoice;
+                    utterance.rate = 1.05;
+                    utterance.pitch = 0.95;
+                    
+                    utterance.onstart = () => {
+                        isConsoleSpeaking = true;
+                        const statusText = document.getElementById('console-status-text');
+                        const statusDot = document.getElementById('console-status-dot');
+                        if (statusText) statusText.textContent = "Agent Presenting (Voice)";
+                        if (statusDot) statusDot.className = "status-pulse-dot thinking";
+                    };
+                    
+                    utterance.onend = () => {
+                        isConsoleSpeaking = false;
+                        const statusText = document.getElementById('console-status-text');
+                        const statusDot = document.getElementById('console-status-dot');
+                        if (statusText) statusText.textContent = "Agent Online — Standby";
+                        if (statusDot) statusDot.className = "status-pulse-dot";
+                    };
 
-                utterance.onerror = () => {
-                    isConsoleSpeaking = false;
-                    if (statusText) statusText.textContent = "Agent Online — Standby";
-                    if (statusDot) statusDot.className = "status-pulse-dot";
-                };
-                
-                window.speechSynthesis.speak(utterance);
+                    utterance.onerror = () => {
+                        isConsoleSpeaking = false;
+                        const statusText = document.getElementById('console-status-text');
+                        const statusDot = document.getElementById('console-status-dot');
+                        if (statusText) statusText.textContent = "Agent Online — Standby";
+                        if (statusDot) statusDot.className = "status-pulse-dot";
+                    };
+                    
+                    window.speechSynthesis.speak(utterance);
+                } catch (e) {
+                    console.error("Speech Synthesis Error:", e);
+                }
             }
 
             function addTerminalLog(text, type = 'info') {
-                if (!terminalLogs) return;
+                const logs = document.getElementById('console-terminal-logs');
+                if (!logs) return;
                 const log = document.createElement('div');
                 log.className = 'log-line';
                 if (type === 'info') log.classList.add('text-cyan');
@@ -6778,13 +6780,13 @@ const fallbackCache = {
                 if (type === 'briefing') log.classList.add('text-violet');
                 
                 log.textContent = text;
-                terminalLogs.appendChild(log);
+                logs.appendChild(log);
                 
-                while (terminalLogs.childNodes.length > 6) {
-                    terminalLogs.removeChild(terminalLogs.firstChild);
+                while (logs.childNodes.length > 6) {
+                    logs.removeChild(logs.firstChild);
                 }
                 
-                terminalLogs.scrollTop = terminalLogs.scrollHeight;
+                logs.scrollTop = logs.scrollHeight;
             }
 
             function renderSlide(topicId, slideIndex) {
@@ -6794,41 +6796,51 @@ const fallbackCache = {
                 const slide = slides[slideIndex];
                 const bulletsHTML = slide.bullets.map(b => `<li>${b}</li>`).join('');
 
-                slideContainer.innerHTML = `
-                    <div class="slide-layout-grid">
-                        <div class="slide-image-box">
-                            <img src="${slide.image}" alt="${slide.phase}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'">
+                const container = document.getElementById('console-slide-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="slide-layout-grid">
+                            <div class="slide-image-box">
+                                <img src="${slide.image}" alt="${slide.phase}" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'">
+                            </div>
+                            <div class="slide-info">
+                                <span class="slide-badge">${slide.badge}</span>
+                                <h3 class="slide-title">${slide.phase}</h3>
+                                <ul class="slide-desc-bullets">
+                                    ${bulletsHTML}
+                                </ul>
+                            </div>
                         </div>
-                        <div class="slide-info">
-                            <span class="slide-badge">${slide.badge}</span>
-                            <h3 class="slide-title">${slide.phase}</h3>
-                            <ul class="slide-desc-bullets">
-                                ${bulletsHTML}
-                            </ul>
-                        </div>
-                    </div>
-                `;
+                    `;
+                }
 
                 if (window.lucide) {
                     lucide.createIcons();
                 }
 
-                dotsContainer.innerHTML = '';
-                slides.forEach((_, idx) => {
-                    const dot = document.createElement('div');
-                    dot.className = `console-dot ${idx === slideIndex ? 'active' : ''}`;
-                    dot.addEventListener('click', () => {
-                        currentSlideIndex = idx;
-                        renderSlide(currentTopic, currentSlideIndex);
-                        addTerminalLog(`[NAV]: manually switched to phase ${idx + 1}`, 'info');
+                const dots = document.getElementById('console-dots-container');
+                if (dots) {
+                    dots.innerHTML = '';
+                    slides.forEach((_, idx) => {
+                        const dot = document.createElement('div');
+                        dot.className = `console-dot ${idx === slideIndex ? 'active' : ''}`;
+                        dot.addEventListener('click', (ev) => {
+                            ev.stopPropagation(); // Avoid triggering parent listeners
+                            currentSlideIndex = idx;
+                            renderSlide(currentTopic, currentSlideIndex);
+                            addTerminalLog(`[NAV]: manually switched to phase ${idx + 1}`, 'info');
+                        });
+                        dots.appendChild(dot);
                     });
-                    dotsContainer.appendChild(dot);
-                });
+                }
 
-                prevBtn.disabled = slideIndex === 0;
-                nextBtn.disabled = slideIndex === slides.length - 1;
+                const prev = document.getElementById('console-prev-btn');
+                const next = document.getElementById('console-next-btn');
+                if (prev) prev.disabled = slideIndex === 0;
+                if (next) next.disabled = slideIndex === slides.length - 1;
 
-                selectorBtns.forEach(btn => {
+                const btns = document.querySelectorAll('.console-sidebar .selector-btn');
+                btns.forEach(btn => {
                     if (btn.getAttribute('data-topic') === topicId) {
                         btn.classList.add('active');
                     } else {
@@ -6843,6 +6855,12 @@ const fallbackCache = {
                 currentTopic = topicId;
                 currentSlideIndex = 0;
 
+                // Disable nav controls during loading to prevent race conditions
+                const prev = document.getElementById('console-prev-btn');
+                const next = document.getElementById('console-next-btn');
+                if (prev) prev.disabled = true;
+                if (next) next.disabled = true;
+
                 addTerminalLog(`[SH]: sh agent_briefing_stream.sh --topic ${topicId}`, 'info');
                 setTimeout(() => {
                     addTerminalLog(`[LOAD]: reading database schema & asset logs...`, 'load');
@@ -6856,38 +6874,57 @@ const fallbackCache = {
                 }, 900);
             }
 
-            selectorBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const topic = btn.getAttribute('data-topic');
-                    if (topic) {
-                        selectTopic(topic);
-                    }
+            function initBriefing() {
+                // Bind click event listeners directly to navigation buttons to avoid delegation issues
+                const prevBtn = document.getElementById('console-prev-btn');
+                const nextBtn = document.getElementById('console-next-btn');
+                
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (currentSlideIndex > 0) {
+                            currentSlideIndex--;
+                            renderSlide(currentTopic, currentSlideIndex);
+                            addTerminalLog(`[NAV]: loaded previous step: ${currentSlideIndex + 1}/4`, 'info');
+                        }
+                    });
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const slides = briefingData[currentTopic];
+                        if (slides && currentSlideIndex < slides.length - 1) {
+                            currentSlideIndex++;
+                            renderSlide(currentTopic, currentSlideIndex);
+                            addTerminalLog(`[NAV]: loaded next step: ${currentSlideIndex + 1}/4`, 'info');
+                        }
+                    });
+                }
+
+                // Bind click event listeners directly to topic sidebar buttons
+                const selectorBtns = document.querySelectorAll('.console-sidebar .selector-btn');
+                selectorBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const topic = btn.getAttribute('data-topic');
+                        if (topic) {
+                            selectTopic(topic);
+                        }
+                    });
                 });
-            });
 
-            prevBtn.addEventListener('click', () => {
-                if (currentSlideIndex > 0) {
-                    currentSlideIndex--;
-                    renderSlide(currentTopic, currentSlideIndex);
-                    addTerminalLog(`[NAV]: loaded previous step: ${currentSlideIndex + 1}/4`, 'info');
-                }
-            });
+                renderSlide(currentTopic, currentSlideIndex);
+                addTerminalLog(`[INIT]: briefing system loaded. selected growthlytics.`, 'info');
+            }
 
-            nextBtn.addEventListener('click', () => {
-                const slides = briefingData[currentTopic];
-                if (slides && currentSlideIndex < slides.length - 1) {
-                    currentSlideIndex++;
-                    renderSlide(currentTopic, currentSlideIndex);
-                    addTerminalLog(`[NAV]: loaded next step: ${currentSlideIndex + 1}/4`, 'info');
-                }
-            });
-
-            document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(() => {
-                    renderSlide(currentTopic, currentSlideIndex);
-                    addTerminalLog(`[INIT]: briefing system loaded. selected growthlytics.`, 'info');
-                }, 800);
-            });
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(initBriefing, 800);
+                });
+            } else {
+                setTimeout(initBriefing, 800);
+            }
         })();
     </script>
 </body>
