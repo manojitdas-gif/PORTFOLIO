@@ -2593,29 +2593,19 @@
             .cursor-glow {
                 display: none;
             }
-            /* Agent chat card — anchored bottom-sheet on mobile */
-            .floating-agent-wrapper {
-                bottom: 16px;
-                right: 16px;
-                gap: 12px;
+            /* Hero floating robot — hide on mobile, it blocks content */
+            .hero-floating-robot {
+                display: none !important;
             }
+            /* Agent chat card — hidden on mobile (audio-only mode) */
             .agent-chat-card {
-                position: fixed;
-                bottom: 80px;
-                right: 16px;
-                left: 16px;
-                width: auto;
-                max-width: none;
-                transform: translateY(20px) scale(0.97);
-                border-radius: 18px;
-                max-height: 70vh;
-                overflow-y: auto;
+                display: none !important;
             }
-            .agent-chat-card.active {
-                transform: translateY(0) scale(1);
-            }
-            .agent-card-body {
-                max-height: 200px;
+            /* FAB becomes simple play/pause only */
+            .floating-agent-wrapper {
+                bottom: 20px;
+                right: 20px;
+                gap: 0;
             }
             .agent-trigger-btn {
                 width: 56px;
@@ -2629,7 +2619,7 @@
                 padding: 56px 0;
             }
             .container {
-                padding: 0 12px;
+                padding: 0 14px;
             }
             .section-title {
                 font-size: 24px;
@@ -2638,20 +2628,47 @@
             .section-label {
                 font-size: 11px;
             }
+            /* Hero fully centered single column */
+            .hero {
+                padding-top: 80px;
+                padding-bottom: 40px;
+                min-height: auto;
+                align-items: flex-start;
+            }
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 28px;
+            }
+            .hero-text {
+                align-items: center;
+                order: 2;
+            }
+            .hero-visual {
+                order: 1;
+                justify-content: center;
+            }
+            .hero-floating-robot {
+                display: none !important;
+            }
             .hero-title {
-                font-size: 30px;
-                line-height: 36px;
+                font-size: 38px;
+                line-height: 44px;
+                letter-spacing: -0.03em;
             }
             .hero-tagline {
                 font-size: 14px;
+                max-width: 100%;
             }
             .hero-meta {
                 justify-content: center;
                 gap: 8px;
+                flex-wrap: wrap;
             }
             .hero-stats {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
+                width: 100%;
             }
             .stat-number {
                 font-size: 24px;
@@ -2660,8 +2677,20 @@
                 font-size: 9px;
             }
             .avatar-container {
-                width: 160px;
-                height: 220px;
+                width: 180px;
+                height: 248px;
+            }
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                width: 100%;
+            }
+            .hero-actions .btn {
+                justify-content: center;
+                text-align: center;
+                width: 100%;
+                padding: 13px 20px;
             }
             .btn {
                 padding: 10px 20px;
@@ -2736,21 +2765,18 @@
                 margin-top: -27px;
                 margin-left: -27px;
             }
-            .floating-agent-wrapper {
-                bottom: 12px;
-                right: 12px;
-            }
+            /* Agent audio-only on mobile */
             .agent-chat-card {
-                bottom: 70px;
-                left: 12px;
-                right: 12px;
+                display: none !important;
+            }
+            .floating-agent-wrapper {
+                bottom: 14px;
+                right: 14px;
+                gap: 0;
             }
             .agent-trigger-btn {
-                width: 50px;
-                height: 50px;
-            }
-            .agent-card-body {
-                max-height: 180px;
+                width: 52px;
+                height: 52px;
             }
             .console-viewport {
                 padding: 16px;
@@ -3553,6 +3579,7 @@
         .welcome-agent-modal.hidden {
             opacity: 0;
             pointer-events: none;
+            visibility: hidden;
         }
 
         .welcome-card-wrapper {
@@ -3746,6 +3773,7 @@
         }
 
         .agent-chat-card {
+            display: none !important;
             width: 320px;
             background: rgba(18, 18, 26, 0.96);
             backdrop-filter: blur(20px);
@@ -3754,7 +3782,6 @@
             border-radius: var(--radius-lg);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            display: flex;
             flex-direction: column;
             opacity: 0;
             transform: translateY(20px) scale(0.95);
@@ -6504,383 +6531,150 @@ const fallbackCache = {
                 });
             }
 
-            // -- AI Speech Agent Scripts & Logic --
+            // -- AI Speech Agent: Auto Full-Narration Mode --
             const agentTriggerBtn = document.getElementById('agent-trigger-btn');
-            const agentChatCard = document.getElementById('agent-chat-card');
-            const agentCloseBtn = document.getElementById('agent-close-btn');
-            const speechBubble = document.getElementById('agent-speech-bubble');
-            const soundwave = document.getElementById('soundwave-container');
-            const playPauseBtn = document.getElementById('agent-play-pause-btn');
-            const playIcon = document.getElementById('agent-play-icon');
-            const muteBtn = document.getElementById('agent-mute-btn');
-            const muteIcon = document.getElementById('agent-mute-icon');
-            const sectionSelector = document.getElementById('agent-section-selector');
-            const statusIndicator = document.getElementById('agent-status-indicator');
+            const agentTriggerIcon = document.getElementById('agent-trigger-icon');
             const pulseRing = document.getElementById('agent-pulse-ring');
 
-            // Narration Scripts
-            const sectionScripts = {
-                welcome: {
-                    title: "Welcome Guide",
-                    bubble: "Hi, I am **MD-Agent**, Manojit's virtual guide! I'll narrate each section of his portfolio to help you explore his career and projects. Scroll down or select a section to begin.",
-                    speech: "Welcome to my portfolio! I am MD-Agent, your guide. Let me show you around Manojit's space, detailing his operations, data analysis work, and development projects."
-                },
-                about: {
-                    title: "About Manojit",
-                    bubble: "In the **About** section, read about Manojit's professional focus: operational excellence, customer success analytics, and business growth strategies.",
-                    speech: "Here is Manojit's profile. As the founder of Growthlytics and an Operations Specialist, he brings deep expertise in operations, analytics, and business transformation. He is a 2024 graduate, highly skilled in customer management and client relationships."
-                },
-                skills: {
-                    title: "Core Skillsets",
-                    bubble: "Manojit's **Skills** span operational tools (Excel, SQL, CRMs), programming languages, and automation workflows. Check the visual progress bars for proficiency.",
-                    speech: "These are Manojit's core skills, ranging from Data Analytics with SQL and Excel to operations management and custom AI integrations. He excels at automating reports and streamlining work processes."
-                },
-                "ai-advisor": {
-                    title: "AI Advisor Terminal",
-                    bubble: "Try the interactive **AI Advisor**! Choose a business type and prompt our AI model to compile a custom digital strategy report dynamically.",
-                    speech: "Explore the AI Advisor terminal, a custom-built environment demonstrating real-time AI solutions and growth strategies. You can query customized digital action plans instantly."
-                },
-                projects: {
-                    title: "Portfolio Projects",
-                    bubble: "Browse Manojit's **Projects**. You can click 'Live App' to view them, or click **'Explore Code'** to browse their files and code structure inside our custom explorer modal.",
-                    speech: "Check out Manojit's projects, including Growthlytics, RetailFlow AI, and Rever Cafe, featuring full-stack development and databases. Use the custom Explore Code feature to inspect files directly in this window."
-                },
-                journey: {
-                    title: "Professional Journey",
-                    bubble: "Follow Manojit's **Journey** timeline. It details his education and his Customer Service Associate tenure representing Flipkart at **Tech Mahindra**.",
-                    speech: "Trace Manojit's professional timeline, including his graduation and key operations role at Tech Mahindra, where he handled customer relations and reporting pipelines."
-                },
-                "media-hub": {
-                    title: "Media & Resources",
-                    bubble: "Watch Manojit's professional video introduction in the **Media** hub, and download his latest CV/Resume in high-fidelity PDF or image formats.",
-                    speech: "Watch his professional video introduction and download his resume in PDF or image format. Direct access links are provided for easy retrieval."
-                },
-                "briefing-agent": {
-                    title: "Interactive Briefing Console",
-                    bubble: "Step into the **Interactive Briefing Console**. Select any project or experience, and click the controls to see a detailed phase-by-phase presentation.",
-                    speech: "Welcome to the Interactive Briefing Console. You can choose any of Manojit's projects or experiences to see a detailed step by step presentation of the implementation, objective, architecture, and business outcomes."
-                },
-                reviews: {
-                    title: "Endorsements & Reviews",
-                    bubble: "Read verified endorsements, including a key recommendation from **Balu Mahendra**, Delivery Head at Tech Mahindra. Feel free to leave your own review!",
-                    speech: "Read verified client and management recommendations, including a key endorsement from Balu Mahendra, Delivery Head at Tech Mahindra, praising Manojit's analytical and operations skills."
-                },
-                contact: {
-                    title: "Get In Touch",
-                    bubble: "Need to collaborate or hire? Use the **Contact** buttons to email him at **manojitdas876@gmail.com** or connect on LinkedIn.",
-                    speech: "Get in touch directly via email at manojitdas876@gmail.com to collaborate or hire. He is available for immediate opportunities."
-                }
-            };
+            // Full portfolio narration — one continuous script from start to end
+            const FULL_NARRATION = `
+Welcome! I am MD-Agent, the voice guide for Manojit Das's portfolio. Let me walk you through everything from start to finish.
 
-            let currentSection = 'welcome';
-            let isMuted = false; // "Muted" controls whether we autoplay on scroll
+First, a quick introduction. Manojit Das is the Founder of Growthlytics, an Operations Associate, and a Data Analyst based in Kolkata, India. He builds future-ready digital transformation models, one project at a time.
+
+About Manojit — He is a 2024 graduate with deep expertise in operational excellence, customer success analytics, and business growth strategies. As the founder of Growthlytics, he has led digital strategy for multiple clients across West Bengal. He excels in customer management, client relationships, and building scalable operations systems.
+
+His Core Skills — Manojit's skills span Data Analytics with SQL, Excel, and Power BI, Python programming for automation, Customer Relationship Management using Zoho and HubSpot, Operations Management, and custom AI workflow integrations. He is proficient in JavaScript for web development and building full-stack digital products.
+
+The AI Advisor Terminal — This is a custom-built interactive terminal demonstrating real-time AI solutions. You can select a business type and generate a custom digital growth strategy report powered by Gemini AI. It showcases Manojit's ability to build functional AI-integrated tools.
+
+Portfolio Projects — Manojit has built three major live applications. First, Growthlytics — a digital growth agency platform for local businesses. Second, RetailFlow AI — an intelligent inventory and sales analytics dashboard. Third, Rever Cafe — a complete restaurant management and ordering system. All projects are deployed live and can be explored with their full code inside this portfolio.
+
+Professional Journey — Manojit's career started with his graduation in Commerce from St. Xavier's College, Kolkata, in 2024 with distinction. He then worked as a Customer Service Associate at Tech Mahindra, representing Flipkart, where he handled customer relations, reporting pipelines, and operational data analysis.
+
+Media and Resources — You can watch Manojit's professional video introduction and download his latest resume in PDF or image format directly from the Media section.
+
+Endorsements — Manojit has received a key professional recommendation from Balu Mahendra, Delivery Head at Tech Mahindra, praising his analytical thinking, operational discipline, and customer relationship skills.
+
+Finally, to get in touch — You can reach Manojit directly at manojitdas876@gmail.com, connect on LinkedIn, or view his GitHub projects. He is available immediately for operations, business analysis, customer success, or full-stack development opportunities.
+
+Thank you for visiting Manojit Das's portfolio. I hope this tour was helpful!
+            `.trim();
+
             let isSpeaking = false;
+            let isPaused = false;
             let currentUtterance = null;
             let voices = [];
             let selectedVoice = null;
+            let narrationStarted = false;
 
-            // Load and filter male voice
+            // Load voices
             function loadVoices() {
-                voices = window.speechSynthesis.getVoices();
-                
-                // Prioritize male English voices
-                const maleKeywords = ['male', 'david', 'natural', 'google uk english male', 'microsoft david', 'en-'];
-                let candidates = [];
-                
-                // Try finding matching voice
-                for (let keyword of maleKeywords) {
-                    let filtered = voices.filter(v => {
-                        const name = v.name.toLowerCase();
-                        const lang = v.lang.toLowerCase();
-                        return (name.includes(keyword) || lang.includes(keyword)) && lang.startsWith('en');
-                    });
-                    candidates = candidates.concat(filtered);
+                voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+                const prefer = ['google uk english male', 'microsoft david', 'male', 'david', 'en-us', 'en-gb'];
+                let pick = null;
+                for (const kw of prefer) {
+                    pick = voices.find(v => (v.name.toLowerCase().includes(kw) || v.lang.toLowerCase().includes(kw)) && v.lang.toLowerCase().startsWith('en'));
+                    if (pick) break;
                 }
-                
-                // Deduplicate candidates
-                candidates = [...new Set(candidates)];
-                
-                // Select first English male voice candidate, or any English voice, or default
-                if (candidates.length > 0) {
-                    selectedVoice = candidates[0];
-                } else {
-                    selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0] || null;
-                }
+                selectedVoice = pick || voices.find(v => v.lang.toLowerCase().startsWith('en')) || voices[0] || null;
             }
 
-            // Initialize Speech API voices
             if (window.speechSynthesis) {
                 loadVoices();
-                if (window.speechSynthesis.onvoiceschanged !== undefined) {
-                    window.speechSynthesis.onvoiceschanged = loadVoices;
-                }
+                window.speechSynthesis.onvoiceschanged = loadVoices;
             }
 
-            // Speak Text Function — works on iOS/Android inside user gesture
-            function speakText(text) {
+            function updateFAB() {
+                if (!agentTriggerBtn) return;
+                if (isSpeaking) {
+                    agentTriggerBtn.classList.add('speaking');
+                    if (pulseRing) pulseRing.style.opacity = '1';
+                    if (agentTriggerIcon) agentTriggerIcon.setAttribute('data-lucide', 'pause');
+                } else {
+                    agentTriggerBtn.classList.remove('speaking');
+                    if (pulseRing) pulseRing.style.opacity = '0';
+                    if (agentTriggerIcon) agentTriggerIcon.setAttribute('data-lucide', narrationStarted ? 'play' : 'volume-2');
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+
+            function speakFull(text) {
                 if (!window.speechSynthesis) return;
-
-                // Stop current speech
-                window.speechSynthesis.cancel();
-                isSpeaking = false;
-                updateSpeechUI();
-
-                if (!text) return;
-
-                // iOS Safari fix: resume after cancel to avoid stuck state
+                try { window.speechSynthesis.cancel(); } catch(e) {}
                 try { window.speechSynthesis.resume(); } catch(e) {}
 
-                currentUtterance = new SpeechSynthesisUtterance(text);
-
-                // Pick best voice
                 if (!selectedVoice || voices.length === 0) loadVoices();
-                if (selectedVoice) currentUtterance.voice = selectedVoice;
 
-                currentUtterance.rate = 1.0;
-                currentUtterance.pitch = 0.95;
-                currentUtterance.volume = 1.0;
-                currentUtterance.lang = 'en-US';
+                const utter = new SpeechSynthesisUtterance(text);
+                if (selectedVoice) utter.voice = selectedVoice;
+                utter.rate = 0.95;
+                utter.pitch = 1.0;
+                utter.volume = 1.0;
+                utter.lang = 'en-US';
 
-                currentUtterance.onstart = () => {
-                    isSpeaking = true;
-                    updateSpeechUI();
+                utter.onstart = () => { isSpeaking = true; isPaused = false; updateFAB(); };
+                utter.onend   = () => { isSpeaking = false; isPaused = false; updateFAB(); };
+                utter.onerror = (e) => {
+                    if (e.error !== 'interrupted' && e.error !== 'canceled') console.warn('TTS:', e.error);
+                    isSpeaking = false; updateFAB();
                 };
 
-                currentUtterance.onend = () => {
-                    isSpeaking = false;
-                    updateSpeechUI();
-                };
-
-                currentUtterance.onerror = (e) => {
-                    if (e.error !== 'interrupted' && e.error !== 'canceled') {
-                        console.warn("Speech Synthesis:", e.error);
-                    }
-                    isSpeaking = false;
-                    updateSpeechUI();
-                };
-
-                // Small delay to let cancel() settle on Android
-                setTimeout(() => {
-                    try { window.speechSynthesis.speak(currentUtterance); } catch(err) {}
-                }, 50);
+                currentUtterance = utter;
+                narrationStarted = true;
+                
+                // Speak immediately in the same tick of the event loop for mobile compatibility
+                try { window.speechSynthesis.speak(utter); } catch(err) { console.error("TTS Speak Error:", err); }
             }
 
-            // Update UI State for Speech
-            function updateSpeechUI() {
-                if (isSpeaking) {
-                    soundwave.classList.add('active');
-                    statusIndicator.classList.add('speaking');
-                    pulseRing.classList.add('speaking');
-                    agentTriggerBtn.classList.add('speaking');
-                    playIcon.setAttribute('data-lucide', 'pause');
-                    // Change visual trigger button icon when speaking
-                    const triggerIcon = document.getElementById('agent-trigger-icon');
-                    if (triggerIcon) triggerIcon.setAttribute('data-lucide', 'volume-2');
-                } else {
-                    soundwave.classList.remove('active');
-                    statusIndicator.classList.remove('speaking');
-                    pulseRing.classList.remove('speaking');
-                    agentTriggerBtn.classList.remove('speaking');
-                    playIcon.setAttribute('data-lucide', 'play');
-                    const triggerIcon = document.getElementById('agent-trigger-icon');
-                    if (triggerIcon) triggerIcon.setAttribute('data-lucide', 'message-square-text');
-                }
-                if (window.lucide) {
-                    lucide.createIcons();
-                }
-            }
-
-            // Set Speech Agent Content
-            function setAgentContent(sectionKey, shouldSpeak = false) {
-                const config = sectionScripts[sectionKey];
-                if (!config) return;
-
-                currentSection = sectionKey;
-                sectionSelector.value = sectionKey;
-
-                // Update text bubble with markdown support
-                speechBubble.innerHTML = config.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-                if (shouldSpeak && !isMuted) {
-                    speakText(config.speech);
-                }
-            }
-
-            // Handle Welcome Card Dismissal / Verification Gate
-            if (enterBtn && welcomeModal) {
-                enterBtn.addEventListener('click', () => {
-                    // Speak IMMEDIATELY inside the gesture (before any async code)
-                    // This satisfies iOS/Android user gesture requirement
-                    const welcomeScript = sectionScripts['welcome'];
-                    if (welcomeScript && !isMuted) {
-                        speakText(welcomeScript.speech);
-                    }
-
-                    welcomeModal.classList.add('hidden');
-
-                    // Show agent panel (UI update can be async)
-                    setTimeout(() => {
-                        agentChatCard.classList.add('active');
-                        currentSection = 'welcome';
-                        if (sectionSelector) sectionSelector.value = 'welcome';
-                        if (speechBubble && welcomeScript) {
-                            speechBubble.innerHTML = welcomeScript.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                        }
-                        updateSpeechUI();
-                    }, 300);
-                });
-            }
-
-            // Toggle Agent Panel visibility
-            if (agentTriggerBtn && agentChatCard) {
+            // FAB = Play/Pause toggle
+            if (agentTriggerBtn) {
                 agentTriggerBtn.addEventListener('click', () => {
-                    const isActive = agentChatCard.classList.contains('active');
-                    if (isActive) {
-                        agentChatCard.classList.remove('active');
-                        window.speechSynthesis && window.speechSynthesis.cancel();
-                        isSpeaking = false;
-                        updateSpeechUI();
-                    } else {
-                        agentChatCard.classList.add('active');
-                        // Speak immediately inside the gesture for iOS/Android
-                        const script = sectionScripts[currentSection];
-                        if (script && !isMuted) speakText(script.speech);
-                        // Update text bubble
-                        if (script && speechBubble) {
-                            speechBubble.innerHTML = script.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                        }
-                    }
-                });
-            }
-
-            if (agentCloseBtn && agentChatCard) {
-                agentCloseBtn.addEventListener('click', () => {
-                    agentChatCard.classList.remove('active');
-                    window.speechSynthesis && window.speechSynthesis.cancel();
-                    isSpeaking = false;
-                    updateSpeechUI();
-                });
-            }
-
-            // Play/Pause Action — speak directly inside the gesture
-            if (playPauseBtn) {
-                playPauseBtn.addEventListener('click', () => {
+                    if (!window.speechSynthesis) return;
                     if (isSpeaking) {
-                        window.speechSynthesis && window.speechSynthesis.cancel();
+                        // Pause
+                        window.speechSynthesis.cancel();
                         isSpeaking = false;
-                        updateSpeechUI();
+                        isPaused = true;
+                        updateFAB();
                     } else {
-                        const script = sectionScripts[currentSection];
-                        if (script) {
-                            speakText(script.speech);
-                        }
+                        // Play / Resume full narration
+                        speakFull(FULL_NARRATION);
                     }
                 });
             }
 
-            // Mute / Autoplay Toggle Action
-            if (muteBtn) {
-                muteBtn.addEventListener('click', () => {
-                    isMuted = !isMuted;
-                    if (isMuted) {
-                        muteIcon && muteIcon.setAttribute('data-lucide', 'volume-x');
-                        muteBtn.classList.add('active');
-                        window.speechSynthesis && window.speechSynthesis.cancel();
-                        isSpeaking = false;
-                        updateSpeechUI();
-                    } else {
-                        muteIcon && muteIcon.setAttribute('data-lucide', 'volume-2');
-                        muteBtn.classList.remove('active');
-                    }
-                    if (window.lucide) lucide.createIcons();
+            // Welcome button: start narration IMMEDIATELY inside the gesture
+            const enterBtn2 = document.getElementById('welcome-enter-btn');
+            const welcomeModal2 = document.getElementById('welcome-agent-modal');
+            if (enterBtn2 && welcomeModal2) {
+                enterBtn2.addEventListener('click', () => {
+                    // Speak immediately — MUST be called synchronously inside click handler
+                    speakFull(FULL_NARRATION);
+
+                    // Dismiss welcome modal (async is fine for UI)
+                    welcomeModal2.classList.add('hidden');
+                    updateFAB();
                 });
             }
 
-            // Section dropdown changer — change IS a user gesture, so speak directly
-            if (sectionSelector) {
-                sectionSelector.addEventListener('change', (e) => {
-                    const val = e.target.value;
-                    const config = sectionScripts[val];
-                    if (!config) return;
-                    currentSection = val;
-                    if (speechBubble) {
-                        speechBubble.innerHTML = config.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                    }
-                    // Speak directly — change event IS a user gesture
-                    if (!isMuted) speakText(config.speech);
-                });
-            }
-
-            // -- Scroll Tracking & Intersection Observer --
-            const sections = [
-                { id: 'about', key: 'about' },
-                { id: 'skills', key: 'skills' },
-                { id: 'ai-advisor', key: 'ai-advisor' },
-                { id: 'projects', key: 'projects' },
-                { id: 'journey', key: 'journey' },
-                { id: 'media-hub', key: 'media-hub' },
-                { id: 'briefing-agent-section', key: 'briefing-agent' },
-                { id: 'reviews', key: 'reviews' },
-                { id: 'contact', key: 'contact' }
-            ];
-
-            const observerOptions = {
-                root: null,
-                rootMargin: '-35% 0px -40% 0px', // focused in the center of the viewport
-                threshold: 0
-            };
-
-            const sectionObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const sectionId = entry.target.id;
-                        const match = sections.find(s => s.id === sectionId);
-                        if (match && match.key !== currentSection) {
-                            // On mobile/touch: only update the text bubble.
-                            // Speech requires a direct user gesture on iOS/Android,
-                            // so we can't speak on scroll. Use Play button instead.
-                            const config = sectionScripts[match.key];
-                            if (config) {
-                                currentSection = match.key;
-                                if (sectionSelector) sectionSelector.value = match.key;
-                                if (speechBubble) {
-                                    speechBubble.innerHTML = config.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                                }
-                                // Only auto-speak on non-touch devices
-                                if (!isTouchDevice && !isMuted) {
-                                    speakText(config.speech);
-                                }
-                            }
-                        }
-                    }
-                });
-            }, observerOptions);
-
-            // Hero Floating Robot Interaction
+            // Hero floating robot = Play/Pause toggle
             const heroRobot = document.getElementById('hero-floating-robot');
             if (heroRobot) {
                 heroRobot.addEventListener('click', () => {
-                    const agentChatCard = document.getElementById('agent-chat-card');
-                    if (agentChatCard) {
-                        const isActive = agentChatCard.classList.contains('active');
-                        if (!isActive) {
-                            agentChatCard.classList.add('active');
-                        }
-                        // Trigger voice guide for welcome/about section
-                        if (typeof setAgentContent === 'function') {
-                            setAgentContent('welcome', true);
-                        }
+                    if (!window.speechSynthesis) return;
+                    if (isSpeaking) {
+                        window.speechSynthesis.cancel();
+                        isSpeaking = false;
+                        isPaused = true;
+                        updateFAB();
+                    } else {
+                        speakFull(FULL_NARRATION);
                     }
                 });
             }
-
-            // Observe all target sections
-            sections.forEach(s => {
-                const el = document.getElementById(s.id);
-                if (el) sectionObserver.observe(el);
-            });
         })();
-
+        
         // ==========================================
         // INTERACTIVE AI BRIEFING CONSOLE SYSTEM
         // ==========================================
