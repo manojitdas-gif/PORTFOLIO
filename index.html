@@ -4372,6 +4372,10 @@
                     <i data-lucide="volume-2" style="width: 18px;"></i>
                     Enter & Activate Voice Guide
                 </button>
+                <p class="silent-switch-hint" style="font-size: 11px; color: var(--text3); opacity: 0.7; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
+                    <i data-lucide="volume-x" style="width: 12px; height: 12px; color: var(--gold);"></i>
+                    Note: Disable phone Silent Mode/Silent Switch for audio guide
+                </p>
             </div>
         </div>
     </div>
@@ -6599,13 +6603,64 @@ Thank you for visiting Manojit Das's portfolio. I hope this tour was helpful!
                 if (window.lucide) lucide.createIcons();
             }
 
+            function showSpeechToast() {
+                const existing = document.getElementById('speech-toast');
+                if (existing) existing.remove();
+                
+                const toast = document.createElement('div');
+                toast.id = 'speech-toast';
+                toast.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="status-pulse-dot" style="width: 8px; height: 8px; border-radius: 50%; display: inline-block; background-color: #c9a84c; box-shadow: 0 0 10px #c9a84c; animation: pulseGlow 2s infinite;"></span>
+                        <strong style="color: #c9a84c;">MD-Agent Narrating...</strong>
+                    </div>
+                    <div style="font-size: 11px; opacity: 0.9; margin-top: 4px; line-height: 1.3;">
+                        📱 If you don't hear sound, ensure your phone's physical Silent switch is OFF.
+                    </div>
+                `;
+                toast.style.position = 'fixed';
+                toast.style.bottom = '100px';
+                toast.style.left = '50%';
+                toast.style.transform = 'translateX(-50%)';
+                toast.style.background = 'rgba(13, 13, 21, 0.95)';
+                toast.style.border = '1px solid rgba(201, 168, 76, 0.4)';
+                toast.style.color = '#ffffff';
+                toast.style.padding = '12px 18px';
+                toast.style.borderRadius = '16px';
+                toast.style.fontSize = '12px';
+                toast.style.fontFamily = "'DM Sans', sans-serif";
+                toast.style.zIndex = '99999';
+                toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.6)';
+                toast.style.width = '90%';
+                toast.style.maxWidth = '360px';
+                toast.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                toast.style.opacity = '0';
+                
+                document.body.appendChild(toast);
+                setTimeout(() => { toast.style.opacity = '1'; }, 20);
+                
+                // Remove toast after 7 seconds
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => { toast.remove(); }, 500);
+                }, 7000);
+            }
+
             function speakFull(text) {
                 if (!window.speechSynthesis) return;
+                
+                // 1. Cancel and unlock audio queue
                 try { window.speechSynthesis.cancel(); } catch(e) {}
                 try { window.speechSynthesis.resume(); } catch(e) {}
 
                 if (!selectedVoice || voices.length === 0) loadVoices();
 
+                // 2. Prime the synthesizer with a blank utterance inside the user gesture
+                const primeUtter = new SpeechSynthesisUtterance(" ");
+                primeUtter.volume = 0.0;
+                window.speechSynthesis.speak(primeUtter);
+
+                // 3. Prepare the main utterance
                 const utter = new SpeechSynthesisUtterance(text);
                 if (selectedVoice) utter.voice = selectedVoice;
                 utter.rate = 0.95;
@@ -6613,7 +6668,12 @@ Thank you for visiting Manojit Das's portfolio. I hope this tour was helpful!
                 utter.volume = 1.0;
                 utter.lang = 'en-US';
 
-                utter.onstart = () => { isSpeaking = true; isPaused = false; updateFAB(); };
+                utter.onstart = () => { 
+                    isSpeaking = true; 
+                    isPaused = false; 
+                    updateFAB(); 
+                    showSpeechToast(); 
+                };
                 utter.onend   = () => { isSpeaking = false; isPaused = false; updateFAB(); };
                 utter.onerror = (e) => {
                     if (e.error !== 'interrupted' && e.error !== 'canceled') console.warn('TTS:', e.error);
@@ -6621,10 +6681,15 @@ Thank you for visiting Manojit Das's portfolio. I hope this tour was helpful!
                 };
 
                 currentUtterance = utter;
+                window._activeUtterance = utter; // Fix garbage collection silent failure on iOS
                 narrationStarted = true;
                 
-                // Speak immediately in the same tick of the event loop for mobile compatibility
-                try { window.speechSynthesis.speak(utter); } catch(err) { console.error("TTS Speak Error:", err); }
+                // 4. Speak immediately to maintain synchronous gesture authorization
+                try { 
+                    window.speechSynthesis.speak(utter); 
+                } catch(err) { 
+                    console.error("TTS Speak Error:", err); 
+                }
             }
 
             // FAB = Play/Pause toggle
@@ -6632,13 +6697,11 @@ Thank you for visiting Manojit Das's portfolio. I hope this tour was helpful!
                 agentTriggerBtn.addEventListener('click', () => {
                     if (!window.speechSynthesis) return;
                     if (isSpeaking) {
-                        // Pause
                         window.speechSynthesis.cancel();
                         isSpeaking = false;
                         isPaused = true;
                         updateFAB();
                     } else {
-                        // Play / Resume full narration
                         speakFull(FULL_NARRATION);
                     }
                 });
@@ -6649,10 +6712,7 @@ Thank you for visiting Manojit Das's portfolio. I hope this tour was helpful!
             const welcomeModal2 = document.getElementById('welcome-agent-modal');
             if (enterBtn2 && welcomeModal2) {
                 enterBtn2.addEventListener('click', () => {
-                    // Speak immediately — MUST be called synchronously inside click handler
                     speakFull(FULL_NARRATION);
-
-                    // Dismiss welcome modal (async is fine for UI)
                     welcomeModal2.classList.add('hidden');
                     updateFAB();
                 });
