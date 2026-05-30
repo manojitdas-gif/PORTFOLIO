@@ -85,13 +85,24 @@
             color: inherit;
             text-decoration: none;
             transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
         }
 
-        button, input, textarea {
+        button, input, textarea, select {
             font-family: inherit;
             background: none;
             border: none;
             color: inherit;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        /* All clickable links get proper touch targets */
+        a, button, [role="button"], .nav-link, .btn, .hamburger,
+        .resume-tab-btn, .selector-btn, .console-nav-btn,
+        .agent-control-btn, .agent-close-btn, .agent-trigger-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* BACKGROUND ELEMENTS */
@@ -2271,7 +2282,37 @@
             flex-wrap: wrap;
             justify-content: center;
             margin-top: 12px;
+            position: relative;
             z-index: 1;
+        }
+
+        /* Mobile tip shown on touch devices inside agent */
+        .agent-mobile-hint {
+            display: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--gold);
+            text-align: center;
+            padding: 6px 12px;
+            background: rgba(201, 168, 76, 0.06);
+            border-top: 1px solid rgba(201, 168, 76, 0.1);
+            letter-spacing: 0.05em;
+        }
+
+        @media (pointer: coarse) {
+            .agent-mobile-hint {
+                display: block;
+            }
+            .contact-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .contact-buttons .btn {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+                padding: 14px 20px;
+            }
         }
 
         /* FOOTER */
@@ -2552,6 +2593,35 @@
             .cursor-glow {
                 display: none;
             }
+            /* Agent chat card — anchored bottom-sheet on mobile */
+            .floating-agent-wrapper {
+                bottom: 16px;
+                right: 16px;
+                gap: 12px;
+            }
+            .agent-chat-card {
+                position: fixed;
+                bottom: 80px;
+                right: 16px;
+                left: 16px;
+                width: auto;
+                max-width: none;
+                transform: translateY(20px) scale(0.97);
+                border-radius: 18px;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+            .agent-chat-card.active {
+                transform: translateY(0) scale(1);
+            }
+            .agent-card-body {
+                max-height: 200px;
+            }
+            .agent-trigger-btn {
+                width: 56px;
+                height: 56px;
+                box-shadow: 0 4px 20px rgba(124, 106, 240, 0.5), 0 0 16px rgba(201, 168, 76, 0.3);
+            }
         }
 
         @media (max-width: 480px) {
@@ -2671,12 +2741,16 @@
                 right: 12px;
             }
             .agent-chat-card {
-                width: calc(100vw - 24px);
-                max-width: 340px;
+                bottom: 70px;
+                left: 12px;
+                right: 12px;
             }
             .agent-trigger-btn {
                 width: 50px;
                 height: 50px;
+            }
+            .agent-card-body {
+                max-height: 180px;
             }
             .console-viewport {
                 padding: 16px;
@@ -3623,7 +3697,7 @@
             position: fixed;
             bottom: 32px;
             right: 32px;
-            z-index: 999;
+            z-index: 1100;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
@@ -3645,6 +3719,8 @@
             cursor: pointer;
             transition: var(--transition);
             position: relative;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .agent-trigger-btn:hover {
@@ -3671,7 +3747,7 @@
 
         .agent-chat-card {
             width: 320px;
-            background: rgba(18, 18, 26, 0.9);
+            background: rgba(18, 18, 26, 0.96);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(201, 168, 76, 0.25);
@@ -5606,8 +5682,8 @@
                         <span class="agent-role">Portfolio Voice Assistant</span>
                     </div>
                 </div>
-                <div class="agent-close-btn" id="agent-close-btn">
-                    <i data-lucide="x" style="width: 16px;"></i>
+                <div class="agent-close-btn" id="agent-close-btn" style="padding: 8px; margin: -8px; cursor: pointer;">
+                    <i data-lucide="x" style="width: 18px;"></i>
                 </div>
             </div>
             
@@ -5647,6 +5723,8 @@
                     <option value="contact">10 — Contact</option>
                 </select>
             </div>
+            <!-- Mobile-only hint for voice usage -->
+            <div class="agent-mobile-hint">📱 Tap ▶ to hear narration • Select section below</div>
         </div>
 
         <!-- Float Trigger Button (FAB) -->
@@ -6538,7 +6616,7 @@ const fallbackCache = {
                 }
             }
 
-            // Speak Text Function
+            // Speak Text Function — works on iOS/Android inside user gesture
             function speakText(text) {
                 if (!window.speechSynthesis) return;
 
@@ -6549,13 +6627,19 @@ const fallbackCache = {
 
                 if (!text) return;
 
+                // iOS Safari fix: resume after cancel to avoid stuck state
+                try { window.speechSynthesis.resume(); } catch(e) {}
+
                 currentUtterance = new SpeechSynthesisUtterance(text);
-                if (selectedVoice) {
-                    currentUtterance.voice = selectedVoice;
-                }
-                currentUtterance.rate = 1.05; // natural rate
-                currentUtterance.pitch = 0.95; // slightly deeper male pitch if supported
+
+                // Pick best voice
+                if (!selectedVoice || voices.length === 0) loadVoices();
+                if (selectedVoice) currentUtterance.voice = selectedVoice;
+
+                currentUtterance.rate = 1.0;
+                currentUtterance.pitch = 0.95;
                 currentUtterance.volume = 1.0;
+                currentUtterance.lang = 'en-US';
 
                 currentUtterance.onstart = () => {
                     isSpeaking = true;
@@ -6568,12 +6652,17 @@ const fallbackCache = {
                 };
 
                 currentUtterance.onerror = (e) => {
-                    console.error("Speech Synthesis Error:", e);
+                    if (e.error !== 'interrupted' && e.error !== 'canceled') {
+                        console.warn("Speech Synthesis:", e.error);
+                    }
                     isSpeaking = false;
                     updateSpeechUI();
                 };
 
-                window.speechSynthesis.speak(currentUtterance);
+                // Small delay to let cancel() settle on Android
+                setTimeout(() => {
+                    try { window.speechSynthesis.speak(currentUtterance); } catch(err) {}
+                }, 50);
             }
 
             // Update UI State for Speech
@@ -6620,14 +6709,25 @@ const fallbackCache = {
             // Handle Welcome Card Dismissal / Verification Gate
             if (enterBtn && welcomeModal) {
                 enterBtn.addEventListener('click', () => {
+                    // Speak IMMEDIATELY inside the gesture (before any async code)
+                    // This satisfies iOS/Android user gesture requirement
+                    const welcomeScript = sectionScripts['welcome'];
+                    if (welcomeScript && !isMuted) {
+                        speakText(welcomeScript.speech);
+                    }
+
                     welcomeModal.classList.add('hidden');
-                    
-                    // Show Agent panel and welcome the user
+
+                    // Show agent panel (UI update can be async)
                     setTimeout(() => {
                         agentChatCard.classList.add('active');
-                        // Speak introductory welcome script (physical click gate satisfied!)
-                        setAgentContent('welcome', true);
-                    }, 800);
+                        currentSection = 'welcome';
+                        if (sectionSelector) sectionSelector.value = 'welcome';
+                        if (speechBubble && welcomeScript) {
+                            speechBubble.innerHTML = welcomeScript.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        }
+                        updateSpeechUI();
+                    }, 300);
                 });
             }
 
@@ -6637,12 +6737,18 @@ const fallbackCache = {
                     const isActive = agentChatCard.classList.contains('active');
                     if (isActive) {
                         agentChatCard.classList.remove('active');
-                        window.speechSynthesis.cancel();
+                        window.speechSynthesis && window.speechSynthesis.cancel();
                         isSpeaking = false;
                         updateSpeechUI();
                     } else {
                         agentChatCard.classList.add('active');
-                        setAgentContent(currentSection, true);
+                        // Speak immediately inside the gesture for iOS/Android
+                        const script = sectionScripts[currentSection];
+                        if (script && !isMuted) speakText(script.speech);
+                        // Update text bubble
+                        if (script && speechBubble) {
+                            speechBubble.innerHTML = script.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        }
                     }
                 });
             }
@@ -6650,17 +6756,17 @@ const fallbackCache = {
             if (agentCloseBtn && agentChatCard) {
                 agentCloseBtn.addEventListener('click', () => {
                     agentChatCard.classList.remove('active');
-                    window.speechSynthesis.cancel();
+                    window.speechSynthesis && window.speechSynthesis.cancel();
                     isSpeaking = false;
                     updateSpeechUI();
                 });
             }
 
-            // Play/Pause Action
+            // Play/Pause Action — speak directly inside the gesture
             if (playPauseBtn) {
                 playPauseBtn.addEventListener('click', () => {
                     if (isSpeaking) {
-                        window.speechSynthesis.cancel();
+                        window.speechSynthesis && window.speechSynthesis.cancel();
                         isSpeaking = false;
                         updateSpeechUI();
                     } else {
@@ -6677,26 +6783,31 @@ const fallbackCache = {
                 muteBtn.addEventListener('click', () => {
                     isMuted = !isMuted;
                     if (isMuted) {
-                        muteIcon.setAttribute('data-lucide', 'volume-x');
+                        muteIcon && muteIcon.setAttribute('data-lucide', 'volume-x');
                         muteBtn.classList.add('active');
-                        window.speechSynthesis.cancel();
+                        window.speechSynthesis && window.speechSynthesis.cancel();
                         isSpeaking = false;
                         updateSpeechUI();
                     } else {
-                        muteIcon.setAttribute('data-lucide', 'volume-2');
+                        muteIcon && muteIcon.setAttribute('data-lucide', 'volume-2');
                         muteBtn.classList.remove('active');
                     }
-                    if (window.lucide) {
-                        lucide.createIcons();
-                    }
+                    if (window.lucide) lucide.createIcons();
                 });
             }
 
-            // Section dropdown changer
+            // Section dropdown changer — change IS a user gesture, so speak directly
             if (sectionSelector) {
                 sectionSelector.addEventListener('change', (e) => {
                     const val = e.target.value;
-                    setAgentContent(val, true);
+                    const config = sectionScripts[val];
+                    if (!config) return;
+                    currentSection = val;
+                    if (speechBubble) {
+                        speechBubble.innerHTML = config.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    }
+                    // Speak directly — change event IS a user gesture
+                    if (!isMuted) speakText(config.speech);
                 });
             }
 
@@ -6720,14 +6831,26 @@ const fallbackCache = {
             };
 
             const sectionObserver = new IntersectionObserver((entries) => {
-                // Find visible section
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const sectionId = entry.target.id;
                         const match = sections.find(s => s.id === sectionId);
                         if (match && match.key !== currentSection) {
-                            // Update agent script, trigger voice if voice mode active and not muted
-                            setAgentContent(match.key, true);
+                            // On mobile/touch: only update the text bubble.
+                            // Speech requires a direct user gesture on iOS/Android,
+                            // so we can't speak on scroll. Use Play button instead.
+                            const config = sectionScripts[match.key];
+                            if (config) {
+                                currentSection = match.key;
+                                if (sectionSelector) sectionSelector.value = match.key;
+                                if (speechBubble) {
+                                    speechBubble.innerHTML = config.bubble.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                                }
+                                // Only auto-speak on non-touch devices
+                                if (!isTouchDevice && !isMuted) {
+                                    speakText(config.speech);
+                                }
+                            }
                         }
                     }
                 });
