@@ -1344,6 +1344,355 @@
             gap: 16px;
         }
 
+        /* ── REAL-TIME GITHUB SYNC ENGINE STYLES ─────────────────────── */
+
+        /* Live Sync Header Row */
+        .repos-sync-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* Pulsing LIVE badge */
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 13px;
+            background: rgba(54, 217, 196, 0.1);
+            border: 1px solid rgba(54, 217, 196, 0.3);
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--teal);
+            letter-spacing: 0.05em;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 0 0 rgba(54, 217, 196, 0.6);
+            animation: livePulse 2s ease-in-out infinite;
+        }
+
+        .live-dot.offline {
+            background: var(--rose);
+            box-shadow: 0 0 0 0 rgba(240, 96, 144, 0.6);
+            animation: none;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(54, 217, 196, 0.6); }
+            50% { box-shadow: 0 0 0 5px rgba(54, 217, 196, 0); }
+        }
+
+        /* Last Synced timer */
+        .sync-timer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sync-refresh-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--outline-variant);
+            color: var(--text3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            background: transparent;
+        }
+        .sync-refresh-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: rotate(90deg);
+        }
+        .sync-refresh-btn.spinning svg {
+            animation: spin 0.7s linear infinite;
+        }
+
+        /* Repo NEW badge */
+        .repo-badge-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 9px;
+            background: rgba(124, 106, 240, 0.18);
+            border: 1px solid rgba(124, 106, 240, 0.4);
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--accent2);
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            text-transform: uppercase;
+            animation: badgePop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* Repo ACTIVE badge */
+        .repo-badge-active {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 9px;
+            background: rgba(54, 217, 196, 0.15);
+            border: 1px solid rgba(54, 217, 196, 0.4);
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--teal);
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Repo RECENT badge */
+        .repo-badge-recent {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 9px;
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--gold);
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+
+        @keyframes badgePop {
+            from { opacity: 0; transform: scale(0.6); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Card entrance animation for newly detected repos */
+        @keyframes repoSlideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .repo-card.is-new {
+            animation: repoSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            border-color: rgba(124, 106, 240, 0.35) !important;
+            box-shadow: 0 0 20px rgba(124, 106, 240, 0.12);
+        }
+
+        /* ── GITHUB ACTIVITY FEED ─────────────────────── */
+        .activity-feed-section {
+            margin-top: 48px;
+        }
+
+        .activity-feed-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .activity-feed-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--on-surface);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stream-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(240, 96, 144, 0.1);
+            border: 1px solid rgba(240, 96, 144, 0.25);
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--rose);
+        }
+
+        .stream-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--rose);
+            animation: livePulse 1.5s ease-in-out infinite;
+        }
+
+        .activity-feed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 20px;
+            background: rgba(16, 14, 8, 0.7);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text2);
+            transition: var(--transition);
+            animation: repoSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .activity-item:hover {
+            border-color: rgba(201, 168, 76, 0.2);
+            background: rgba(22, 19, 13, 0.9);
+        }
+
+        .activity-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .activity-icon.push   { background: rgba(124, 106, 240, 0.15); color: var(--accent2); }
+        .activity-icon.create { background: rgba(54, 217, 196, 0.15);  color: var(--teal); }
+        .activity-icon.pr     { background: rgba(240, 96, 144, 0.15);  color: var(--rose); }
+        .activity-icon.star   { background: rgba(201, 168, 76, 0.15);  color: var(--gold); }
+        .activity-icon.fork   { background: rgba(201, 168, 76, 0.1);   color: var(--gold-light); }
+        .activity-icon.other  { background: rgba(160,158,192, 0.1);    color: var(--text2); }
+
+        .activity-body { flex: 1; min-width: 0; }
+
+        .activity-repo {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 260px;
+        }
+
+        .activity-repo a { color: inherit; }
+        .activity-repo a:hover { color: var(--gold-light); }
+
+        .activity-msg {
+            color: var(--text3);
+            font-size: 11px;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 360px;
+        }
+
+        .activity-time {
+            font-size: 10px;
+            color: var(--text3);
+            white-space: nowrap;
+            align-self: center;
+            flex-shrink: 0;
+        }
+
+        .activity-loader {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 24px 20px;
+            color: var(--text3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        /* ── FLOATING SYNC HUD ─────────────────────── */
+        #github-sync-hud {
+            position: fixed;
+            bottom: 90px;
+            right: 28px;
+            z-index: 900;
+            background: rgba(10, 10, 15, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(54, 217, 196, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 14px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text3);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 210px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(54,217,196,0.05);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            animation: repoSlideIn 0.6s 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        #github-sync-hud .hud-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #github-sync-hud .hud-label { color: var(--text3); }
+        #github-sync-hud .hud-value { color: var(--on-surface); margin-left: auto; }
+        #github-sync-hud .hud-title {
+            font-size: 10px;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 6px;
+            margin-bottom: 2px;
+            font-weight: 700;
+        }
+
+        .hud-manual-btn {
+            margin-top: 4px;
+            padding: 6px 0;
+            text-align: center;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: var(--radius-sm);
+            color: var(--gold);
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(201, 168, 76, 0.05);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .hud-manual-btn:hover {
+            background: rgba(201, 168, 76, 0.12);
+            border-color: var(--gold);
+        }
+
+        /* ── RESPONSIVE ─────────────────────── */
+        @media (max-width: 768px) {
+            #github-sync-hud { display: none; }
+            .activity-msg { max-width: 200px; }
+            .activity-repo { max-width: 160px; }
+        }
+
         /* INTERACTIVE RESUME TABS */
         .resume-container {
             max-width: 1000px;
@@ -2068,21 +2417,30 @@
 
         @media (max-width: 768px) {
             .section {
-                padding: 80px 0;
+                padding: 72px 0;
+            }
+            .container {
+                padding: 0 16px;
+            }
+            .section-title {
+                font-size: 28px;
+                margin-bottom: 32px;
             }
             .navbar-container {
-                height: 70px;
+                height: 64px;
             }
             .nav-links {
                 position: fixed;
-                top: 70px;
+                top: 64px;
                 left: 0;
                 width: 100%;
-                background: var(--dark);
+                background: rgba(10, 10, 15, 0.97);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
                 border-bottom: 1px solid var(--outline-variant);
                 flex-direction: column;
-                padding: 32px;
-                gap: 24px;
+                padding: 28px 24px;
+                gap: 20px;
                 transform: translateY(-150%);
                 opacity: 0;
                 transition: var(--transition);
@@ -2106,17 +2464,61 @@
             .hamburger.active span:nth-child(3) {
                 transform: translateY(-8px) rotate(-45deg);
             }
+            /* Hero */
+            .hero {
+                padding-top: 84px;
+                padding-bottom: 60px;
+                min-height: auto;
+            }
             .hero-title {
-                font-size: 40px;
-                line-height: 48px;
+                font-size: 36px;
+                line-height: 42px;
+            }
+            .hero-tagline {
+                font-size: 16px;
             }
             .hero-stats {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
+                gap: 12px;
             }
+            .stat-number {
+                font-size: 28px;
+            }
+            .hero-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+            }
+            .hero-actions .btn {
+                flex: 1 1 140px;
+                justify-content: center;
+                text-align: center;
+            }
+            .avatar-container {
+                width: 200px;
+                height: 275px;
+            }
+            /* About */
+            .about-p {
+                font-size: 16px;
+            }
+            .about-profile-card {
+                padding: 24px;
+            }
+            /* Skills */
             .skills-grid {
                 grid-template-columns: 1fr;
             }
+            /* Terminal / AI */
+            .terminal-body {
+                padding: 20px 16px;
+                font-size: 13px;
+            }
+            .terminal-input-row {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            /* Projects grids */
             .analytics-projects-grid, .certs-grid, .edu-grid {
                 grid-template-columns: 1fr;
             }
@@ -2126,9 +2528,15 @@
             .github-stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .contact-title {
-                font-size: 32px;
+            /* Glass cards */
+            .glass-card {
+                padding: 20px;
             }
+            /* Contact */
+            .contact-title {
+                font-size: 28px;
+            }
+            /* Footer */
             .footer-container {
                 flex-direction: column;
                 gap: 16px;
@@ -2139,6 +2547,147 @@
             }
             .featured-ribbon {
                 display: none;
+            }
+            /* Cursor glow off on touch */
+            .cursor-glow {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section {
+                padding: 56px 0;
+            }
+            .container {
+                padding: 0 12px;
+            }
+            .section-title {
+                font-size: 24px;
+                margin-bottom: 24px;
+            }
+            .section-label {
+                font-size: 11px;
+            }
+            .hero-title {
+                font-size: 30px;
+                line-height: 36px;
+            }
+            .hero-tagline {
+                font-size: 14px;
+            }
+            .hero-meta {
+                justify-content: center;
+                gap: 8px;
+            }
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .stat-number {
+                font-size: 24px;
+            }
+            .stat-label {
+                font-size: 9px;
+            }
+            .avatar-container {
+                width: 160px;
+                height: 220px;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+            .badge {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+            .glass-card {
+                padding: 16px;
+            }
+            .about-profile-card {
+                padding: 20px;
+            }
+            .profile-info-row {
+                font-size: 13px;
+                gap: 10px;
+            }
+            .profile-info-label {
+                width: 70px;
+                font-size: 10px;
+            }
+            .terminal-body {
+                padding: 16px 12px;
+                font-size: 12px;
+            }
+            .resume-tabs-nav {
+                gap: 6px;
+                padding-bottom: 12px;
+            }
+            .resume-tab-btn {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+            .welcome-3d-card {
+                padding: 28px 16px;
+            }
+            .welcome-title {
+                font-size: 22px;
+            }
+            .welcome-subtitle {
+                font-size: 13px;
+            }
+            .welcome-btn {
+                padding: 12px 24px;
+                font-size: 12px;
+            }
+            .hologram-container {
+                width: 110px;
+                height: 110px;
+            }
+            .hologram-ring {
+                width: 110px;
+                height: 110px;
+            }
+            .hologram-ring-2 {
+                width: 90px;
+                height: 90px;
+                top: 10px;
+                left: 10px;
+            }
+            .hologram-ring-3 {
+                width: 70px;
+                height: 70px;
+                top: 20px;
+                left: 20px;
+            }
+            .hologram-sphere {
+                width: 55px;
+                height: 55px;
+                margin-top: -27px;
+                margin-left: -27px;
+            }
+            .floating-agent-wrapper {
+                bottom: 12px;
+                right: 12px;
+            }
+            .agent-chat-card {
+                width: calc(100vw - 24px);
+                max-width: 340px;
+            }
+            .agent-trigger-btn {
+                width: 50px;
+                height: 50px;
+            }
+            .console-viewport {
+                padding: 16px;
+            }
+            .contact-form {
+                gap: 12px;
+            }
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
             }
         }
 
@@ -4279,10 +4828,25 @@
 
             </div>
 
-            <!-- Dynamic GitHub Repos -->
-            <div class="repos-grid-title">
-                <i data-lucide="git-branch" style="color: var(--gold); width: 20px;"></i>
-                Active <span>GitHub Repositories</span>
+            <!-- Dynamic GitHub Repos — Live Sync Engine -->
+            <div class="repos-sync-header">
+                <div class="repos-grid-title" style="margin-bottom: 0;">
+                    <i data-lucide="git-branch" style="color: var(--gold); width: 20px;"></i>
+                    Active <span>GitHub Repositories</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <span class="live-badge" id="live-sync-badge">
+                        <span class="live-dot" id="live-dot"></span>
+                        <span id="live-badge-text">LIVE</span>
+                    </span>
+                    <span class="sync-timer" id="sync-timer-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span id="last-synced-text">Connecting...</span>
+                    </span>
+                    <button class="sync-refresh-btn" id="manual-refresh-btn" title="Force refresh GitHub data">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                    </button>
+                </div>
             </div>
             
             <div class="repos-grid" id="repos-grid">
@@ -4292,6 +4856,27 @@
                     <span>Querying GitHub Nodes...</span>
                 </div>
             </div>
+
+            <!-- GitHub Activity Feed -->
+            <div class="activity-feed-section">
+                <div class="activity-feed-header">
+                    <div class="activity-feed-title">
+                        <i data-lucide="activity" style="color: var(--rose); width: 18px;"></i>
+                        Recent GitHub Activity
+                    </div>
+                    <span class="stream-badge">
+                        <span class="stream-dot"></span>
+                        Streaming
+                    </span>
+                </div>
+                <div class="activity-feed-list" id="activity-feed-list">
+                    <div class="activity-loader">
+                        <div class="spinner" style="width:20px; height:20px; border-width:1.5px;"></div>
+                        <span>Fetching event stream...</span>
+                    </div>
+                </div>
+            </div>
+
 
         </div>
     </section>
@@ -5101,7 +5686,9 @@
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        const particleCount = 90;
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        const isMobile = window.innerWidth <= 768;
+        const particleCount = (isMobile || isTouchDevice) ? 30 : 90;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -5170,12 +5757,14 @@
         }
         animateParticles();
 
-        // 2. CURSOR GLOW EFFECT
+        // 2. CURSOR GLOW EFFECT (desktop only)
         const cursorGlow = document.getElementById('cursor-glow');
-        document.addEventListener('mousemove', (e) => {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
-        });
+        if (!isTouchDevice && cursorGlow) {
+            document.addEventListener('mousemove', (e) => {
+                cursorGlow.style.left = e.clientX + 'px';
+                cursorGlow.style.top = e.clientY + 'px';
+            });
+        }
 
         // 3. MOBILE HAMBURGER MENU
         const hamburger = document.getElementById('hamburger');
@@ -5240,168 +5829,54 @@
 
         revealElements.forEach(el => revealObserver.observe(el));
 
-        // 6. 3D CARD TILT & LED GLOW INTERACTION
-        const cards = document.querySelectorAll('.glass-card, .vercel-card, .avatar-border, .resume-timeline-content, .cert-card, .edu-card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; // x position inside element
-                const y = e.clientY - rect.top;  // y position inside element
-                const xc = rect.width / 2;
-                const yc = rect.height / 2;
-                const dx = (x - xc) / xc; // Normalized delta x [-1, 1]
-                const dy = (y - yc) / yc; // Normalized delta y [-1, 1]
-                
-                // Tilt card (3-4 degrees max)
-                card.style.transform = `perspective(1000px) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg) translateY(-4px)`;
-                
-                // Update cursor tracking position variables for LED glowing effect
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = '';
-            });
-        });
-
-        // Separate About inner card tilt
-        const aboutCardInner = document.querySelector('.about-card-inner');
-        if (aboutCardInner) {
-            aboutCardInner.addEventListener('mousemove', (e) => {
-                const rect = aboutCardInner.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const xc = rect.width / 2;
-                const yc = rect.height / 2;
-                const dx = (x - xc) / xc;
-                const dy = (y - yc) / yc;
-                aboutCardInner.style.transform = `perspective(1000px) rotateY(${dx * 8}deg) rotateX(${-dy * 8}deg)`;
-            });
-
-            aboutCardInner.addEventListener('mouseleave', () => {
-                aboutCardInner.style.transform = '';
-            });
-        }
-
-        // 7. GITHUB API REPOS FETCH & RENDER
-        const reposGrid = document.getElementById('repos-grid');
-        const repoLoader = document.getElementById('repo-loader');
-        const statsTotalRepos = document.getElementById('stats-total-repos');
-        const statsTotalStars = document.getElementById('stats-total-stars');
-
-        async function fetchGitHubRepos() {
-            try {
-                const response = await fetch('https://api.github.com/users/manojitdas-gif/repos?per_page=30&sort=updated');
-                if (!response.ok) throw new Error('Failed to fetch from Github');
-                
-                const repos = await response.json();
-                
-                // Hide loader
-                repoLoader.style.display = 'none';
-
-                // Filter out featured and custom show-cased repos (SKILLSELEVATE, TECHAI) to avoid redundancy
-                const filteredRepos = repos.filter(repo => {
-                    const name = repo.name.toLowerCase();
-                    return name !== 'skillselevate' && name !== 'techai';
+        // 6. 3D CARD TILT & LED GLOW INTERACTION (desktop only)
+        if (!isTouchDevice) {
+            const cards = document.querySelectorAll('.glass-card, .vercel-card, .avatar-border, .resume-timeline-content, .cert-card, .edu-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const xc = rect.width / 2;
+                    const yc = rect.height / 2;
+                    const dx = (x - xc) / xc;
+                    const dy = (y - yc) / yc;
+                    
+                    card.style.transform = `perspective(1000px) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg) translateY(-4px)`;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
                 });
 
-                // Total Repo counts & Stars count calculations
-                let totalStars = 0;
-                repos.forEach(r => totalStars += r.stargazers_count);
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
 
-                if (statsTotalRepos) statsTotalRepos.textContent = repos.length;
-                if (statsTotalStars) statsTotalStars.textContent = totalStars;
-
-                if (filteredRepos.length === 0) {
-                    reposGrid.innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--text3); font-family: 'JetBrains Mono';">
-                            No other repositories found.
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Render top repos (cap at 6)
-                filteredRepos.slice(0, 6).forEach(repo => {
-                    const card = document.createElement('div');
-                    card.className = 'glass-card repo-card';
-                    card.style.position = 'relative';
-
-                    // Language dot color mapping
-                    let dotColor = '#99907e';
-                    const lang = repo.language || 'HTML';
-                    if (lang === 'TypeScript') dotColor = '#3178c6';
-                    else if (lang === 'JavaScript') dotColor = '#f7df1e';
-                    else if (lang === 'Python') dotColor = '#3776ab';
-                    else if (lang === 'HTML') dotColor = '#e34f26';
-                    else if (lang === 'CSS') dotColor = '#1572b6';
-
-                    card.innerHTML = `
-                        <div class="repo-card-top-accent"></div>
-                        <div class="repo-header">
-                            <span class="repo-icon">📂</span>
-                            <a href="${repo.html_url}" target="_blank" class="repo-title">${repo.name}</a>
-                        </div>
-                        <p class="repo-desc">${repo.description || 'No description provided. Click link to view repository structure and code.'}</p>
-                        <div class="repo-meta">
-                            <div class="repo-lang">
-                                <span class="repo-lang-dot" style="background-color: ${dotColor}"></span>
-                                <span>${lang}</span>
-                            </div>
-                            <div class="repo-stats-item">
-                                <i data-lucide="star" style="width: 12px; fill: var(--gold); stroke: var(--gold);"></i>
-                                <span>${repo.stargazers_count}</span>
-                            </div>
-                            <div class="repo-stats-item">
-                                <i data-lucide="git-fork" style="width: 12px;"></i>
-                                <span>${repo.forks_count}</span>
-                            </div>
-                            <a href="${repo.html_url}" target="_blank" class="repo-btn-link">
-                                <i data-lucide="arrow-up-right" style="width: 16px;"></i>
-                            </a>
-                        </div>
-                    `;
-
-                    reposGrid.appendChild(card);
+            // Separate About inner card tilt
+            const aboutCardInner = document.querySelector('.about-card-inner');
+            if (aboutCardInner) {
+                aboutCardInner.addEventListener('mousemove', (e) => {
+                    const rect = aboutCardInner.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const xc = rect.width / 2;
+                    const yc = rect.height / 2;
+                    const dx = (x - xc) / xc;
+                    const dy = (y - yc) / yc;
+                    aboutCardInner.style.transform = `perspective(1000px) rotateY(${dx * 8}deg) rotateX(${-dy * 8}deg)`;
                 });
 
-                // Re-initialize lucide icons for newly added HTML nodes
-                lucide.createIcons();
-
-                // Bind tilt effect to new cards
-                document.querySelectorAll('.repo-card').forEach(card => {
-                    card.addEventListener('mousemove', (e) => {
-                        const rect = card.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        const xc = rect.width / 2;
-                        const yc = rect.height / 2;
-                        const dx = (x - xc) / xc;
-                        const dy = (y - yc) / yc;
-                        card.style.transform = `perspective(1000px) rotateY(${dx * 5}deg) rotateX(${-dy * 5}deg) translateY(-4px)`;
-                    });
-
-                    card.addEventListener('mouseleave', () => {
-                        card.style.transform = '';
-                    });
+                aboutCardInner.addEventListener('mouseleave', () => {
+                    aboutCardInner.style.transform = '';
                 });
-
-            } catch (error) {
-                console.error(error);
-                repoLoader.style.display = 'none';
-                reposGrid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; color: var(--rose); font-family: 'JetBrains Mono'; padding: 40px 0;">
-                        <i data-lucide="alert-triangle" style="width: 24px; margin-bottom: 8px;"></i><br>
-                        Failed to fetch live repositories. Please check <a href="https://github.com/manojitdas-gif" target="_blank" style="text-decoration: underline; color: var(--gold);">GitHub Profile</a>.
-                    </div>
-                `;
-                lucide.createIcons();
             }
         }
-        fetchGitHubRepos();
+
+
+        // 7. GITHUB API REPOS — handled by the Real-Time Sync Engine (see bottom of file)
 
         // 8. INTERACTIVE AI BUSINESS SOLVER ENGINE
+
         const inputField = document.getElementById('terminal-input');
         const submitBtn = document.getElementById('terminal-submit-btn');
         const logsBox = document.getElementById('terminal-logs');
@@ -5929,7 +6404,7 @@ const fallbackCache = {
             const welcomeModal = document.getElementById('welcome-agent-modal');
             const enterBtn = document.getElementById('welcome-enter-btn');
 
-            if (welcomeCard && welcomeModal) {
+            if (welcomeCard && welcomeModal && !isTouchDevice) {
                 welcomeModal.addEventListener('mousemove', (e) => {
                     const rect = welcomeCard.getBoundingClientRect();
                     const x = e.clientX - rect.left - (rect.width / 2);
@@ -6927,5 +7402,413 @@ const fallbackCache = {
             }
         })();
     </script>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         FLOATING GITHUB SYNC HUD
+    ═══════════════════════════════════════════════════════════ -->
+    <div id="github-sync-hud">
+        <div class="hud-title">⚡ GitHub Sync Active</div>
+        <div class="hud-row">
+            <span class="hud-label">Status</span>
+            <span class="hud-value" id="hud-status-val" style="color: var(--teal);">Connecting…</span>
+        </div>
+        <div class="hud-row">
+            <span class="hud-label">Repos found</span>
+            <span class="hud-value" id="hud-repos-val">—</span>
+        </div>
+        <div class="hud-row">
+            <span class="hud-label">Last sync</span>
+            <span class="hud-value" id="hud-last-val">—</span>
+        </div>
+        <div class="hud-row">
+            <span class="hud-label">Next sync</span>
+            <span class="hud-value" id="hud-next-val">5 min</span>
+        </div>
+        <button class="hud-manual-btn" id="hud-refresh-btn">↺ Force Sync Now</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         REAL-TIME GITHUB SYNC ENGINE
+    ═══════════════════════════════════════════════════════════ -->
+    <script>
+    (() => {
+        'use strict';
+
+        /* ── CONFIG ──────────────────────────────────────────── */
+        const GH_USER        = 'manojitdas-gif';
+        const POLL_INTERVAL  = 5 * 60 * 1000;   // 5 minutes
+        const CACHE_KEY      = `gh_cache_${GH_USER}`;
+        const EVENTS_KEY     = `gh_events_${GH_USER}`;
+        const MAX_REPOS      = 6;
+        const MAX_EVENTS     = 6;
+        // Featured repos that have dedicated cards — exclude from dynamic grid
+        const FEATURED_REPOS = ['skillselevate', 'techai'];
+
+        /* ── DOM REFS ─────────────────────────────────────────── */
+        const reposGrid       = document.getElementById('repos-grid');
+        const repoLoader      = document.getElementById('repo-loader');
+        const activityList    = document.getElementById('activity-feed-list');
+        const liveDot         = document.getElementById('live-dot');
+        const liveBadgeText   = document.getElementById('live-badge-text');
+        const lastSyncedText  = document.getElementById('last-synced-text');
+        const manualRefreshBtn= document.getElementById('manual-refresh-btn');
+        const hudRefreshBtn   = document.getElementById('hud-refresh-btn');
+        const hudStatusVal    = document.getElementById('hud-status-val');
+        const hudReposVal     = document.getElementById('hud-repos-val');
+        const hudLastVal      = document.getElementById('hud-last-val');
+        const hudNextVal      = document.getElementById('hud-next-val');
+        const statsTotalRepos = document.getElementById('stats-total-repos');
+        const statsTotalStars = document.getElementById('stats-total-stars');
+
+        /* ── STATE ────────────────────────────────────────────── */
+        let lastSyncTime  = null;
+        let nextSyncIn    = POLL_INTERVAL;
+        let pollTimer     = null;
+        let nextTimer     = null;
+        let syncedRepoNames = new Set();
+
+        /* ── UTILITIES ────────────────────────────────────────── */
+        function timeAgo(dateStr) {
+            const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+            if (diff < 60)    return `${diff}s ago`;
+            if (diff < 3600)  return `${Math.floor(diff/60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+            return `${Math.floor(diff/86400)}d ago`;
+        }
+
+        function getLangColor(lang) {
+            const map = { TypeScript:'#3178c6', JavaScript:'#f7df1e', Python:'#3776ab', HTML:'#e34f26', CSS:'#1572b6', Go:'#00add8', Rust:'#dea584', Java:'#b07219', Shell:'#89e051' };
+            return map[lang] || '#99907e';
+        }
+
+        function setLiveState(online) {
+            if (!liveDot || !liveBadgeText) return;
+            if (online) {
+                liveDot.classList.remove('offline');
+                liveBadgeText.textContent = 'LIVE';
+                if (hudStatusVal) { hudStatusVal.textContent = 'Connected'; hudStatusVal.style.color = 'var(--teal)'; }
+            } else {
+                liveDot.classList.add('offline');
+                liveBadgeText.textContent = 'OFFLINE';
+                if (hudStatusVal) { hudStatusVal.textContent = 'Offline'; hudStatusVal.style.color = 'var(--rose)'; }
+            }
+        }
+
+        function setSpinning(spinning) {
+            [manualRefreshBtn, hudRefreshBtn].forEach(btn => {
+                if (!btn) return;
+                btn.classList.toggle('spinning', spinning);
+            });
+        }
+
+        /* ── TICKING TIMER ────────────────────────────────────── */
+        function startTickingTimer() {
+            clearInterval(nextTimer);
+            nextTimer = setInterval(() => {
+                if (lastSyncTime && lastSyncedText) {
+                    lastSyncedText.textContent = `Synced ${timeAgo(lastSyncTime)}`;
+                }
+                if (hudLastVal && lastSyncTime) {
+                    hudLastVal.textContent = timeAgo(lastSyncTime);
+                }
+                if (hudNextVal) {
+                    nextSyncIn = Math.max(0, nextSyncIn - 1000);
+                    const m = Math.floor(nextSyncIn / 60000);
+                    const s = Math.floor((nextSyncIn % 60000) / 1000);
+                    hudNextVal.textContent = m > 0 ? `${m}m ${s}s` : `${s}s`;
+                }
+            }, 1000);
+        }
+
+        /* ── REPO BADGE LOGIC ─────────────────────────────────── */
+        function getRepoBadgeHTML(repo, isNew) {
+            const now = Date.now();
+            const pushed = new Date(repo.pushed_at).getTime();
+            const hoursDiff = (now - pushed) / 3600000;
+
+            if (isNew) return `<span class="repo-badge-new">✨ NEW</span>`;
+            if (hoursDiff < 24) return `<span class="repo-badge-active">🔥 ACTIVE</span>`;
+            if (hoursDiff < 168) return `<span class="repo-badge-recent">● Recent</span>`;
+            return '';
+        }
+
+        /* ── RENDER REPOS ─────────────────────────────────────── */
+        function renderRepos(repos, cachedNames) {
+            if (repoLoader) repoLoader.style.display = 'none';
+
+            const filtered = repos
+                .filter(r => !FEATURED_REPOS.includes(r.name.toLowerCase()))
+                .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+
+            // Update stats
+            let totalStars = 0;
+            repos.forEach(r => totalStars += r.stargazers_count);
+            if (statsTotalRepos) statsTotalRepos.textContent = repos.length;
+            if (statsTotalStars) statsTotalStars.textContent = totalStars;
+            if (hudReposVal) hudReposVal.textContent = repos.length;
+
+            if (filtered.length === 0) {
+                reposGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text3);font-family:'JetBrains Mono';">No other repositories found.</div>`;
+                return;
+            }
+
+            // Determine which repos are new since last render
+            const currentNames = new Set(filtered.map(r => r.name));
+            const newNames = cachedNames ? new Set([...currentNames].filter(n => !cachedNames.has(n))) : new Set();
+
+            // Clear and re-render (efficient for small sets)
+            reposGrid.innerHTML = '';
+
+            filtered.slice(0, MAX_REPOS).forEach((repo, idx) => {
+                const isNew = newNames.has(repo.name);
+                const lang  = repo.language || 'HTML';
+                const card  = document.createElement('div');
+                card.className = 'glass-card repo-card' + (isNew ? ' is-new' : '');
+                card.style.animationDelay = `${idx * 0.07}s`;
+
+                card.innerHTML = `
+                    <div class="repo-card-top-accent"></div>
+                    <div class="repo-header">
+                        <span class="repo-icon">📂</span>
+                        <a href="${repo.html_url}" target="_blank" rel="noopener" class="repo-title">${repo.name}</a>
+                        ${getRepoBadgeHTML(repo, isNew)}
+                    </div>
+                    <p class="repo-desc">${repo.description || 'No description provided. Click link to view repository structure and code.'}</p>
+                    <div class="repo-meta">
+                        <div class="repo-lang">
+                            <span class="repo-lang-dot" style="background-color:${getLangColor(lang)}"></span>
+                            <span>${lang}</span>
+                        </div>
+                        <div class="repo-stats-item">
+                            <i data-lucide="star" style="width:12px;fill:var(--gold);stroke:var(--gold);"></i>
+                            <span>${repo.stargazers_count}</span>
+                        </div>
+                        <div class="repo-stats-item">
+                            <i data-lucide="git-fork" style="width:12px;"></i>
+                            <span>${repo.forks_count}</span>
+                        </div>
+                        <span style="margin-left:auto;font-size:10px;color:var(--text3);">${timeAgo(repo.pushed_at)}</span>
+                        <a href="${repo.html_url}" target="_blank" rel="noopener" class="repo-btn-link">
+                            <i data-lucide="arrow-up-right" style="width:16px;"></i>
+                        </a>
+                    </div>
+                `;
+
+                reposGrid.appendChild(card);
+            });
+
+            // Re-init icons + tilt for new cards
+            if (window.lucide) lucide.createIcons();
+            attachTilt();
+
+            syncedRepoNames = currentNames;
+        }
+
+        /* ── CARD TILT ────────────────────────────────────────── */
+        function attachTilt() {
+            document.querySelectorAll('.repo-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const r = card.getBoundingClientRect();
+                    const dx = ((e.clientX - r.left) / r.width  - 0.5) * 10;
+                    const dy = ((e.clientY - r.top)  / r.height - 0.5) * 10;
+                    card.style.transform = `perspective(1000px) rotateY(${dx}deg) rotateX(${-dy}deg) translateY(-4px)`;
+                });
+                card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+            });
+        }
+
+        /* ── ACTIVITY FEED ────────────────────────────────────── */
+        function getEventMeta(event) {
+            switch (event.type) {
+                case 'PushEvent': {
+                    const commits = event.payload.commits || [];
+                    const msg = commits.length > 0 ? commits[commits.length - 1].message : 'pushed commits';
+                    return { icon: '⬆', cls: 'push', label: 'Pushed', msg: msg.split('\n')[0].slice(0, 72) };
+                }
+                case 'CreateEvent':
+                    return { icon: '✦', cls: 'create', label: `Created ${event.payload.ref_type}`, msg: event.payload.description || event.payload.ref || '' };
+                case 'PullRequestEvent':
+                    return { icon: '⊞', cls: 'pr', label: `PR ${event.payload.action}`, msg: (event.payload.pull_request || {}).title || '' };
+                case 'WatchEvent':
+                    return { icon: '★', cls: 'star', label: 'Starred', msg: '' };
+                case 'ForkEvent':
+                    return { icon: '⑂', cls: 'fork', label: 'Forked', msg: (event.payload.forkee || {}).full_name || '' };
+                case 'IssuesEvent':
+                    return { icon: '⊙', cls: 'other', label: `Issue ${event.payload.action}`, msg: (event.payload.issue || {}).title || '' };
+                default:
+                    return { icon: '◈', cls: 'other', label: event.type.replace('Event', ''), msg: '' };
+            }
+        }
+
+        async function fetchAndRenderActivity() {
+            try {
+                const cached = localStorage.getItem(EVENTS_KEY);
+                let events = cached ? JSON.parse(cached) : null;
+
+                const resp = await fetch(`https://api.github.com/users/${GH_USER}/events/public?per_page=15`);
+                if (resp.ok) {
+                    events = await resp.json();
+                    localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+                } else if (!events) {
+                    throw new Error('Events unavailable');
+                }
+
+                renderActivity(events);
+            } catch (err) {
+                if (activityList) {
+                    activityList.innerHTML = `<div class="activity-loader" style="color:var(--text3);">⚠ Activity feed unavailable. Check <a href="https://github.com/${GH_USER}" target="_blank" style="color:var(--gold);">GitHub profile</a>.</div>`;
+                }
+            }
+        }
+
+        function renderActivity(events) {
+            if (!activityList) return;
+            activityList.innerHTML = '';
+
+            const shown = events.slice(0, MAX_EVENTS);
+            shown.forEach((event, idx) => {
+                const { icon, cls, label, msg } = getEventMeta(event);
+                const repoName = event.repo ? event.repo.name.replace(`${GH_USER}/`, '') : '';
+                const repoUrl  = event.repo ? `https://github.com/${event.repo.name}` : '#';
+
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.style.animationDelay = `${idx * 0.08}s`;
+
+                item.innerHTML = `
+                    <div class="activity-icon ${cls}">${icon}</div>
+                    <div class="activity-body">
+                        <div class="activity-repo"><a href="${repoUrl}" target="_blank" rel="noopener">${repoName}</a></div>
+                        <div class="activity-msg">${label}${msg ? ' — ' + msg : ''}</div>
+                    </div>
+                    <div class="activity-time">${timeAgo(event.created_at)}</div>
+                `;
+                activityList.appendChild(item);
+            });
+
+            if (shown.length === 0) {
+                activityList.innerHTML = `<div class="activity-loader" style="color:var(--text3);">No recent public activity found.</div>`;
+            }
+        }
+
+        /* ── MAIN FETCH ───────────────────────────────────────── */
+        async function syncGitHub(isManual = false) {
+            setSpinning(true);
+            setLiveState(true);
+
+            try {
+                // Load from cache first for instant render
+                const cached = localStorage.getItem(CACHE_KEY);
+                let cachedData = cached ? JSON.parse(cached) : null;
+                let cachedNames = null;
+
+                if (cachedData && cachedData.repos) {
+                    renderRepos(cachedData.repos, null);
+                    cachedNames = new Set(cachedData.repos.map(r => r.name));
+                }
+
+                // Fetch fresh data
+                const resp = await fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=50&sort=pushed`);
+                if (!resp.ok) throw new Error(`GitHub API error: ${resp.status}`);
+
+                const repos = await resp.json();
+
+                // Save to cache
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ repos, timestamp: Date.now() }));
+
+                // Render with new-detection
+                renderRepos(repos, cachedNames);
+
+                // Update sync state
+                lastSyncTime = new Date();
+                if (lastSyncedText) lastSyncedText.textContent = 'Just synced';
+                setLiveState(true);
+
+                // Fetch activity feed in parallel
+                fetchAndRenderActivity();
+
+            } catch (err) {
+                console.error('[GH Sync]', err);
+                setLiveState(false);
+
+                // Fall back to cache
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const { repos } = JSON.parse(cached);
+                    renderRepos(repos, null);
+                    if (lastSyncedText) lastSyncedText.textContent = 'Using cached data';
+                } else {
+                    if (repoLoader) repoLoader.style.display = 'none';
+                    if (reposGrid) reposGrid.innerHTML = `
+                        <div style="grid-column:1/-1;text-align:center;color:var(--rose);font-family:'JetBrains Mono';padding:40px 0;">
+                            <i data-lucide="alert-triangle" style="width:24px;margin-bottom:8px;"></i><br>
+                            Failed to fetch repositories. <a href="https://github.com/${GH_USER}" target="_blank" style="text-decoration:underline;color:var(--gold);">View GitHub Profile</a>.
+                        </div>`;
+                    if (window.lucide) lucide.createIcons();
+                }
+            } finally {
+                setSpinning(false);
+                schedulePoll();
+            }
+        }
+
+        /* ── POLLING SCHEDULER ────────────────────────────────── */
+        function schedulePoll() {
+            clearTimeout(pollTimer);
+            nextSyncIn = POLL_INTERVAL;
+            pollTimer = setTimeout(() => {
+                if (!document.hidden) syncGitHub();
+            }, POLL_INTERVAL);
+        }
+
+        /* ── VISIBILITY API — pause when tab hidden ───────────── */
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                // Tab became visible — sync immediately if overdue
+                const cached = localStorage.getItem(CACHE_KEY);
+                const ts = cached ? JSON.parse(cached).timestamp : 0;
+                if (Date.now() - ts > POLL_INTERVAL) syncGitHub();
+            } else {
+                clearTimeout(pollTimer);
+            }
+        });
+
+        /* ── MANUAL REFRESH BUTTONS ───────────────────────────── */
+        [manualRefreshBtn, hudRefreshBtn].forEach(btn => {
+            if (btn) btn.addEventListener('click', () => {
+                clearTimeout(pollTimer);
+                syncGitHub(true);
+            });
+        });
+
+        /* ── BOOT ─────────────────────────────────────────────── */
+        // Check if we have fresh cache (< 5 min) — if so, render instantly then still refresh
+        const bootstrapCache = localStorage.getItem(CACHE_KEY);
+        if (bootstrapCache) {
+            try {
+                const { repos, timestamp } = JSON.parse(bootstrapCache);
+                if (Date.now() - timestamp < POLL_INTERVAL) {
+                    // Cache is fresh: render immediately
+                    if (repoLoader) repoLoader.style.display = 'none';
+                    renderRepos(repos, null);
+                    lastSyncTime = new Date(timestamp);
+                    if (lastSyncedText) lastSyncedText.textContent = `Synced ${timeAgo(lastSyncTime)}`;
+                    setLiveState(true);
+                    schedulePoll();
+                    // Still fetch events
+                    fetchAndRenderActivity();
+                    startTickingTimer();
+                    return; // skip full sync on load
+                }
+            } catch(e) { /* invalid cache — fall through */ }
+        }
+
+        // Cold start: fetch everything now
+        syncGitHub();
+        startTickingTimer();
+
+    })();
+    </script>
+
 </body>
 </html>
